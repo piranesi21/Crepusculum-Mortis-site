@@ -15,7 +15,7 @@
 /* ==================== 01. 공통 설정 ==================== */
 :root {
   /* 간격 기준: 기본 0.5rem의 배수 */
-  --space-unit: 0.5rem;
+  --space-unit: 0.50rem;
   --space-1: var(--space-unit);
   --space-2: calc(var(--space-unit) * 2);
   --space-3: calc(var(--space-unit) * 3);
@@ -35,7 +35,7 @@
   --muted: #c6adb0;
   --line: #63313a;
   /* 본문 너비와 섹션 간격 */
-  --content-width: 54rem;
+  --content-width: 54.00rem;
   --page-gutter: var(--space-4);
   /* 모바일 본문 좌우 여백 */
   --mobile-page-gutter: var(--space-6);
@@ -55,14 +55,14 @@
   --banner-logo-right: 4%;
   /* 일러스트는 정사각형 원본 비율로 ABOUT까지 이어집니다. */
   --viewport-height: 100vh; /* JS가 최초 화면 높이를 px로 고정합니다. JS 비활성 시 기본값 */
-  --banner-art-size: max(100vw, calc(var(--banner-height) + 8rem));
+  --banner-art-size: max(100vw, calc(var(--banner-height) + 8.00rem));
   --banner-art-left: 50%;
   --banner-art-top: 0;
-  --banner-min-height: min(55svw, 95svh);
+  --banner-min-height: min(55vw, calc(var(--viewport-height) * 0.95));
   --banner-height: max(var(--viewport-height), var(--banner-min-height));
   /* 보너스 곡 영문 부제: 음수 offset은 위로, 양수는 아래로 이동 */
-  --bonus-subtitle-size: 1.5rem;
-  --bonus-subtitle-offset: 0rem;
+  --bonus-subtitle-size: 1.50rem;
+  --bonus-subtitle-offset: 0.00rem;
   /* 글꼴 */
   --body-font: 'Pretendard JP', 'Yu Gothic', Meiryo, sans-serif;
   --sans-font: 'Josefin Sans', var(--body-font);
@@ -72,12 +72,12 @@
   --initial-font: 'Grenze Gotisch', var(--display-font);
 
   --banner-logo-transform: translateY(-50%);
-  --banner-inset: clamp(2rem, 5vw, 4rem);
+  --banner-inset: clamp(2.00rem, 5vw, 4.00rem);
   --banner-label-left: var(--banner-inset);
   --banner-label-bottom: var(--banner-inset);
-  --nav-left: clamp(0.5rem, 4vw, 3.5rem);
+  --nav-left: clamp(0.50rem, 4vw, 3.50rem);
   --nav-gap: 0.25rem;
-  --nav-hit-size: 1.5rem;
+  --nav-hit-size: 1.50rem;
 }
 
 /* ==================== 02. 기본 스타일과 접근성 ==================== */
@@ -87,6 +87,7 @@
 }
 
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: var(--space-8);
 }
@@ -113,7 +114,7 @@ img {
 a {
   color: inherit;
   text-decoration: none;
-  text-underline-offset: .25em;
+  text-underline-offset: 0.25em;
 }
 
 a:hover {
@@ -121,7 +122,7 @@ a:hover {
 }
 
 :focus-visible {
-  outline: .125rem solid var(--gold);
+  outline: 2px solid var(--gold);
   outline-offset: var(--space-1);
 }
 
@@ -155,7 +156,8 @@ a:hover {
   position: fixed;
   z-index: 20;
   left: var(--nav-left);
-  top: 50%;
+  /* 주소창이 접혀도 최초 화면의 세로 중앙을 유지 */
+  top: calc(var(--viewport-height) * 0.5);
   transform: translateY(-50%);
 }
 
@@ -171,8 +173,8 @@ a:hover {
   align-items: center;
   gap: var(--space-2);
   min-height: var(--nav-hit-size);
-  font-size: .625rem;
-  letter-spacing: .08em;
+  font-size: 0.65rem;
+  letter-spacing: 0.10em;
   position: relative;
   justify-content: center;
   width: var(--nav-hit-size);
@@ -180,9 +182,9 @@ a:hover {
 
 #navigation-links a::before {
   content: '';
-  width: .375rem;
-  height: .375rem;
-  border: .0625rem solid #ae8189;
+  width: 0.40rem;
+  height: 0.40rem;
+  border: 1px solid #ae8189;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -211,15 +213,17 @@ a:hover {
 .language-switch {
   position: fixed;
   z-index: 25;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: max(1.00rem, env(safe-area-inset-right));
+  /* 최초 화면 하단 기준으로 고정: 주소창 높이 변화에 따라 이동하지 않음 */
+  top: calc(var(--viewport-height) - max(1.00rem, env(safe-area-inset-bottom)));
+  transform: translateY(-100%);
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem;
-  border: 0.0625rem solid var(--line);
-  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.50rem;
   background: var(--bg);
-  box-shadow: 0 0.25rem 1rem #0004;
+  box-shadow: 0 0.25rem 1.00rem #0004;
 }
 
 .language-switch:not([hidden]) {
@@ -228,7 +232,7 @@ a:hover {
 
 .language-switch > span {
   color: var(--line);
-  font: 400 0.875rem/1 var(--body-font);
+  font: 400 0.90rem/1 var(--body-font);
 }
 
 .language-switch button {
@@ -236,19 +240,19 @@ a:hover {
   place-items: center;
   min-width: 2.75rem;
   min-height: 2.75rem;
-  padding: 0.5rem;
-  border: 0.0625rem solid transparent;
+  padding: 0.50rem;
+  border: 1px solid transparent;
   border-radius: 0.25rem;
   background: transparent;
   color: var(--muted);
   font: 600 0.75rem/1 var(--sans-font);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.10em;
   cursor: pointer;
 }
 
 /* Josefin Sans의 시각적 중심: 아래로 1px, 자간 끝 여백의 절반 보정 */
 .language-switch .language-label {
-  translate: 0.04em 0.0625rem;
+  translate: 0.05em 0.05rem;
 }
 
 .language-switch button:hover {
@@ -361,13 +365,13 @@ html:lang(ko) .bonus-note {
 
 .about-content {
   text-align: center;
-  text-shadow: 0 0.125rem 0.5rem var(--bg);
+  text-shadow: 0 0.15rem 0.50rem var(--bg);
 }
 
 #about-title {
   color: var(--gold);
   font-family: var(--japanese-font);
-  font-size: clamp(1.5rem, 3vw, 3rem);
+  font-size: clamp(1.50rem, 3vw, 3.00rem);
   font-weight: 700;
   line-height: 1.25;
 }
@@ -375,9 +379,9 @@ html:lang(ko) .bonus-note {
 .tagline-english {
   margin-top: var(--space-1);
   font-family: var(--display-font);
-  font-size: .875rem;
+  font-size: 0.90rem;
   font-weight: 700;
-  letter-spacing: .16em;
+  letter-spacing: 0.15em;
 }
 
 .about-description, .bonus-note, .bonus-main-title {
@@ -397,9 +401,9 @@ html:lang(ko) .bonus-note {
 
 .about-description {
   margin-top: var(--space-6);
-  font-size: .875rem;
+  font-size: 0.90rem;
   line-height: 1.5;
-  letter-spacing: .08em;
+  letter-spacing: 0.10em;
 }
 
 .preview-placeholder {
@@ -407,17 +411,18 @@ html:lang(ko) .bonus-note {
   aspect-ratio: 16 / 9;
   margin: var(--space-6) auto 0;
   display: grid;
-  place-content: center;
-  gap: var(--space-1);
-  border: .0625rem solid var(--line);
+  border: 1px solid var(--line);
   background: #080002;
   color: var(--muted);
-  font-size: .875rem;
-  letter-spacing: .12em;
+  font-size: 0.90rem;
+  letter-spacing: 0.10em;
 }
 
-.preview-placeholder span {
-  font-size: .625rem;
+.preview-placeholder iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 /* ==================== 06. 배경 장식과 섹션 제목 ==================== */
@@ -429,10 +434,11 @@ html:lang(ko) .bonus-note {
   overflow-x: clip;
 }
 
+/* 가로 넘침은 #main에서만 제한하고 장식의 세로 방향은 자르지 않습니다. */
 .ornament-region {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* 아치 윗부분이 INFO까지 이어지도록 세로 경계를 자르지 않습니다. */
@@ -481,9 +487,9 @@ html:lang(ko) .bonus-note {
 .section-title::after {
   content: '';
   flex: 1;
-  height: .1rem;
+  height: 0.10rem;
   background: var(--line);
-  margin-top: .1em;
+  margin-top: 0.10em;
 }
 
 /* ==================== 07. 트랙리스트 ==================== */
@@ -491,7 +497,7 @@ html:lang(ko) .bonus-note {
 .track-summary {
   margin-top: var(--space-2);
   color: var(--muted);
-  font-size: .75rem;
+  font-size: 0.75rem;
 }
 
 .album-tracks {
@@ -510,7 +516,7 @@ html:lang(ko) .bonus-note {
   margin-bottom: var(--space-1);
   color: var(--gold);
   font-family: var(--display-font);
-  font-size: 1.2rem;
+  font-size: 1.20rem;
   font-weight: 600;
   line-height: 1;
 }
@@ -520,7 +526,7 @@ html:lang(ko) .bonus-note {
 .album-track h3 {
   font-family: var(--track-font);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.50rem;
   line-height: 1.3;
   overflow-wrap: anywhere;
   font-feature-settings: 'ss01' 0;
@@ -532,7 +538,7 @@ html:lang(ko) .bonus-note {
 
 .album-track p {
   margin-top: var(--space-1);
-  font-size: .875rem;
+  font-size: 0.90rem;
   overflow-wrap: anywhere;
 }
 
@@ -545,7 +551,7 @@ html:lang(ko) .bonus-note {
   display: block;
   margin-top: var(--space-1);
   color: var(--gold);
-  font-size: .75rem;
+  font-size: 0.75rem;
 }
 
 /* 보너스 트랙 다운로드 안내: 좁은 화면에서는 본문 여백 안에서 줄바꿈 */
@@ -585,21 +591,73 @@ html:lang(ko) .bonus-note {
 /* ==================== 08. 앨범 정보와 구매 버튼 ==================== */
 
 #info {
+  --info-label-gap: 0.75rem;
   padding-top: var(--section-space);
 }
 
 .information-layout {
   display: grid;
-  grid-template-columns: 22rem minmax(0,1fr);
+  grid-template-columns: 22.00rem minmax(0,1fr);
   align-items: end;
   gap: var(--space-6);
   margin-top: var(--space-6);
 }
 
 .album-jacket {
+  display: block;
+  position: relative;
+  overflow: hidden;
   width: 100%;
   aspect-ratio: 1;
+}
+
+.album-jacket > img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+/* Diversitas의 커버 다운로드 방식: 호버·키보드 포커스 시 안내 표시 */
+.album-jacket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 55%, #2b0007b3);
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+}
+
+.jacket-download-label {
+  position: absolute;
+  z-index: 1;
+  inset: auto 1.00rem 1.00rem;
+  color: var(--text);
+  font: 500 0.90rem/1.5 var(--display-font);
+  text-align: right;
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+}
+
+.album-jacket:hover::after,
+.album-jacket:hover .jacket-download-label,
+.album-jacket:focus-visible::after,
+.album-jacket:focus-visible .jacket-download-label { opacity: 1; }
+
+.album-jacket:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 0.25rem;
+}
+
+/* 터치 화면에서는 다운로드 안내를 항상 표시 */
+@media (hover: none) {
+  .album-jacket::after,
+  .album-jacket .jacket-download-label { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .album-jacket::after, .jacket-download-label { transition: none; }
 }
 
 .album-information {
@@ -608,28 +666,57 @@ html:lang(ko) .bonus-note {
   gap: var(--space-4);
 }
 
+/* 정보 소제목과 값 사이: ONLINE STORE와 같은 0.75rem 간격 */
+.album-information > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--info-label-gap);
+}
+
+.album-information dt, .store h3 {
+  line-height: 1;
+}
+
+.album-information dd {
+  margin-top: 0;
+  line-height: 1.15;
+}
+
+/* 글꼴 내부의 위아래 여백을 제거한 뒤 실제 대문자 윗선·기준선으로 간격 계산 */
+@supports (text-box: trim-both cap alphabetic) {
+  .album-information dt,
+  .album-information dd,
+  .store h3 {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
 .info-title {
   grid-column: 1 / -1;
 }
 
-/* INFORMATION 제목 크기는 별도로 유지합니다. */
-#info-title {
-  font-size: 3rem;
-}
-
 dt, .store h3, .production-credit h3, .artist-credit h3 {
   color: var(--gold);
-  font-size: .625rem;
+  font-size: 0.65rem;
   font-weight: 400;
-  letter-spacing: .08em;
+  letter-spacing: 0.10em;
 }
 
 dd {
   font-family: var(--body-font);
-  font-size: 1.5rem;
+  font-size: 1.50rem;
   line-height: 1.25;
   margin-top: var(--space-1);
   overflow-wrap: anywhere;
+}
+
+/* PC·태블릿: 정보 글자 크기의 1.5배 높이 이내에서 SVG 비율 유지 */
+.info-album-logo {
+  width: 100%;
+  height: auto;
+  max-height: 1.50em;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .store {
@@ -640,18 +727,43 @@ dd {
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
   gap: var(--space-2);
-  margin-top: var(--space-1);
+  margin-top: var(--info-label-gap);
 }
 
-.store-buttons span {
+.store-buttons a {
   display: grid;
   place-items: center;
   min-height: var(--space-6);
   padding: var(--space-1);
-  border: .0625rem solid var(--line);
+  border: 1px solid var(--line);
   color: var(--muted);
-  font-size: .625rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
+  text-decoration: none;
+  transition: color 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+@media (hover: hover) {
+  .store-buttons a:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background-color: rgb(255 215 0 / 6%);
+  }
+}
+
+.store-buttons a:focus-visible {
+  color: var(--gold);
+  border-color: var(--gold);
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.store-buttons a:active {
+  background-color: rgb(255 215 0 / 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .store-buttons a { transition: none; }
 }
 
 /* ==================== 09. 크레딧 ==================== */
@@ -662,29 +774,101 @@ dd {
 }
 
 .production-credit {
-  margin-top: var(--space-4);
+  margin-top: 3.50rem;
 }
 
 .production-credit img {
-  width: 9rem;
-  margin-top: var(--space-1);
+  /* 아티스트명과 같은 font-size를 기준으로 로고도 비례 축소 */
+  font-size: 1.15rem;
+  width: 7.85em;
+  margin-top: 0;
+  opacity: 0; /* 이미지 크기는 유지하고 실제 색은 링크의 currentColor로 표시 */
 }
+
+/* 크레딧 공통: 금색 전환·은은한 빛·왼쪽에서 펼쳐지는 밑줄 */
+.production-credit a,
+.credit-team a,
+.artist-credit a {
+  text-decoration: none;
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 1px;
+  transition: color 250ms ease, text-shadow 250ms ease, background-size 250ms ease;
+}
+
+.production-credit a {
+  position: relative;
+  display: table;
+  margin-top: 0.75rem;
+}
+
+/* 텍스트와 동일한 --gold를 사용해 로고도 정확히 같은 금색으로 전환 */
+.production-credit a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  mask: url('../images/crepusculum/milkyway_logo_text.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .production-credit a:hover,
+  .credit-team a:hover,
+  .artist-credit a:hover {
+    color: var(--gold);
+    text-shadow: 0 0 0.50rem rgb(253 210 62 / 25%);
+    background-size: 100% 1px;
+  }
+}
+
+.production-credit a:focus-visible,
+.credit-team a:focus-visible,
+.artist-credit a:focus-visible {
+  color: var(--gold);
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .production-credit a,
+  .production-credit img,
+  .credit-team a,
+  .artist-credit a {
+    transition: none;
+  }
+}
+
+/* 로고 위 간격을 기준으로 소제목 아래·이름 위의 글꼴 내부 여백만 제거 */
+@supports (text-box: trim-both cap alphabetic) {
+  .production-credit h3,
+  .credit-team dt,
+  .artist-credit h3 {
+    text-box: trim-end cap alphabetic;
+  }
+
+  .credit-team dd {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
 
 .credit-team {
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
   gap: var(--space-4);
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
 }
 
 .credit-team dd {
+  margin-top: 0.75rem;
   font-family: var(--display-font);
-  font-size: 1.125rem;
+  font-size: 1.15rem;
   font-weight: 600;
 }
 
 .artist-credit {
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
 }
 
 .artist-credit ul {
@@ -696,10 +880,18 @@ dd {
   column-gap: var(--space-3);
   /* 各行の先頭より左にある区切りだけを隠します。 */
   overflow: hidden;
-  row-gap: .25rem;
+  row-gap: 0.25rem;
   font-family: var(--display-font);
-  font-size: 1.125rem;
+  font-size: 1.15rem;
   font-weight: 600;
+  line-height: 1.5;
+}
+
+/* 각 행의 line-height는 유지하고 목록 전체의 윗여백만 보정 */
+@supports (text-box: trim-start cap alphabetic) {
+  .artist-credit ul {
+    margin-top: calc(0.75rem - 0.30em);
+  }
 }
 
 .artist-credit li {
@@ -711,7 +903,7 @@ dd {
 .artist-credit li::before {
   content: '|';
   position: absolute;
-  left: -1rem;
+  left: -1.00rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--muted);
@@ -720,7 +912,7 @@ dd {
 
 /* リストのクリップでキーボード操作のフォーカス枠を欠けさせません。 */
 .artist-credit a:focus-visible {
-  outline-offset: -0.125rem;
+  outline-offset: -0.15rem;
 }
 
 /* ==================== 10. 푸터 ==================== */
@@ -729,20 +921,21 @@ dd {
   pointer-events: none;
   padding: var(--space-6) var(--page-gutter) var(--space-10);
   text-align: center;
-  font-size: .625rem;
+  font-size: 0.7rem;
+  line-height: 1.75em;
 }
 
 #footer strong {
   font-family: var(--track-font);
-  font-size: .875rem;
+  font-size: 1rem;
 }
 
 /* ==================== 11. 반응형 ==================== */
 
 /* PC 배너: 양쪽 상단 마크와 하단 레이블에 같은 여백 기준을 사용 */
-@media (min-width: 75rem) {
+@media (min-width: 75.00rem) {
   :root {
-    --banner-inset: clamp(3rem, 6vw, 6rem);
+    --banner-inset: clamp(3.00rem, 6vw, 6.00rem);
     --banner-logo-width: 46%;
     /* 로고 박스의 오른쪽을 심볼과 정렬: 장식 보정은 이미지가 담당 */
     --banner-logo-right: var(--banner-inset);
@@ -766,9 +959,9 @@ dd {
 }
 
 /* 태블릿 이하: 메뉴, 본문 너비, 트랙 2열 */
-@media (max-width: 74.99rem) {
+@media (width < 75.00rem) {
   :root {
-    --content-width: 42rem;
+    --content-width: 42.00rem;
     --section-space: var(--space-8);
     --track-column-gap: var(--space-4);
   }
@@ -778,7 +971,7 @@ dd {
   }
 
   .information-layout {
-    grid-template-columns: 16rem minmax(0,1fr);
+    grid-template-columns: 16.00rem minmax(0,1fr);
   }
 
   .credit-team {
@@ -792,7 +985,7 @@ dd {
 }
 
 /* 작은 태블릿 이하: 앨범 정보 세로 배치, 구매 버튼 1열 */
-@media (max-width: 49.99rem) {
+@media (width < 50.00rem) {
   :root {
     --page-gutter: var(--mobile-page-gutter);
   }
@@ -800,11 +993,11 @@ dd {
   .catalog-mark {
     top: var(--space-3);
     left: var(--space-3);
-    width: 3rem;
+    width: 3.00rem;
   }
 
   .label-symbol {
-    width: 2.5rem;
+    width: 2.50rem;
     top: var(--space-3);
     right: var(--space-3);
   }
@@ -824,22 +1017,22 @@ dd {
   }
 
   #about-title {
-    font-size: 1.5rem;
+    font-size: 1.50rem;
   }
 
   .tagline-english {
-    font-size: .625rem;
-    letter-spacing: .1em;
+    font-size: 0.65rem;
+    letter-spacing: 0.10em;
   }
 
   .about-description {
     margin-top: var(--space-4);
     letter-spacing: 0;
-    font-size: .75rem;
+    font-size: 0.75rem;
   }
 
   .section-title {
-    font-size: 2rem;
+    font-size: 2.00rem;
     gap: var(--space-2);
   }
 
@@ -849,7 +1042,7 @@ dd {
   }
 
   .album-jacket {
-    width: min(100%,22rem);
+    width: min(100%,22.00rem);
     margin-inline: auto;
   }
 
@@ -871,11 +1064,7 @@ dd {
     opacity: var(--ornament-opacity);
   }
 
-  #info-title {
-    font-size: 2rem;
-  }
-
-  .section-title:not(#info-title) {
+  .section-title {
     font-size: 1.75rem;
   }
 
@@ -883,14 +1072,15 @@ dd {
     grid-template-columns: 1fr;
   }
 
-  .store-buttons span {
+  .store-buttons a {
     min-height: var(--space-6);
   }
 
 }
 
 /* 태블릿 공통: 576~1199px, 일정한 여백과 두 열 본문 */
-@media (min-width: 36rem) and (max-width: 74.99rem) {
+@media (min-width: 36.00rem) and (width < 75.00rem) {
+
   :root {
     /* 네비 버튼 오른쪽과 본문 사이에 최소 1.5rem을 확보합니다. */
     --page-gutter: var(--tablet-page-gutter);
@@ -900,13 +1090,13 @@ dd {
     --banner-logo-right: var(--banner-inset);
     --banner-label-left: var(--banner-inset);
     --banner-label-bottom: var(--banner-inset);
-    --track-column-gap: 2rem;
-    --track-row-gap: 1.5rem;
+    --track-column-gap: 2.00rem;
+    --track-row-gap: 1.50rem;
   }
 
   .banner-label {
     width: 32%;
-    max-width: 22rem;
+    max-width: 22.00rem;
     left: var(--banner-inset);
     gap: var(--space-2);
   }
@@ -916,19 +1106,19 @@ dd {
   }
 
   .catalog-mark {
-    width: 3rem;
+    width: 3.00rem;
     left: var(--banner-inset);
     top: var(--banner-inset);
   }
 
   .label-symbol {
-    width: 2.5rem;
+    width: 2.50rem;
     top: var(--banner-inset);
     right: var(--banner-inset);
   }
 
   .album-track h3 {
-    font-size: 1.375rem;
+    font-size: 1.40rem;
   }
 
   .track-number {
@@ -936,11 +1126,11 @@ dd {
   }
 
   #about-title {
-    font-size: 2rem;
+    font-size: 2.00rem;
   }
 
   .about-description {
-    font-size: 0.875rem;
+    font-size: 0.90rem;
   }
 
   .store-buttons {
@@ -949,7 +1139,7 @@ dd {
 }
 
 /* 세로 태블릿: 넓은 중앙 제목과 캐릭터 중심의 구도 */
-@media (min-width: 36rem) and (max-width: 74.99rem) and (orientation: portrait) {
+@media (min-width: 36.00rem) and (width < 75.00rem) and (orientation: portrait) {
   :root {
     --banner-art-size: max(100vw, calc(var(--banner-height) * 1.25));
     --banner-art-left: 56%;
@@ -961,14 +1151,14 @@ dd {
 
   .banner-label {
     width: 48%;
-    max-width: 24rem;
+    max-width: 24.00rem;
   }
 }
 
 /* 충분한 폭의 태블릿에서는 자켓과 정보를 나란히 배치 */
-@media (min-width: 44rem) and (max-width: 74.99rem) {
+@media (min-width: 44.00rem) and (width < 75.00rem) {
   .information-layout {
-    grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(12.00rem, 0.85fr) minmax(0, 1.2fr);
     gap: var(--space-4);
   }
 
@@ -977,12 +1167,33 @@ dd {
   }
 
   .album-information dd {
-    font-size: 1.125rem;
+    font-size: 1.15rem;
   }
 }
 
 /* 모바일: 공통 모바일 여백 유지, 트랙 1열, 배너 로고 중앙 */
-@media (max-width: 35.99rem) {
+@media (width < 36.00rem) {
+  .info-album-logo {
+    max-height: none;
+  }
+
+  /* 언어 선택은 PC 크기를 유지하고 모바일에서만 간결하게 표시 */
+  .language-switch {
+    gap: 0.15rem;
+    padding: 0.15rem;
+  }
+
+  .language-switch button {
+    min-width: 2.50rem;
+    min-height: 2.50rem;
+    padding: 0.35rem;
+    font-size: 0.70rem;
+  }
+
+  .language-switch > span {
+    font-size: 0.75rem;
+  }
+
   :root {
     --track-row-gap: 1.25rem;
     --section-space: var(--space-6);
@@ -997,7 +1208,7 @@ dd {
     --banner-logo-right: auto;
     /* 모바일은 왼쪽 기준: 가로 이동 없이 세로 위치만 조정 */
     --banner-logo-transform: translateY(-50%);
-    --banner-inset: clamp(2rem, 8vw, 3rem);
+    --banner-inset: clamp(2.00rem, 8vw, 3.00rem);
     --nav-left: 0.25rem;
   }
 
@@ -1014,24 +1225,24 @@ dd {
     font-size: 1.25rem;
   }
 
-  /* PC에서 지정한 부제 크기의 5/6: 기본 1.5rem → 모바일 1.25rem */
+  /* 영문 부제 크기는 유지하고, 위의 곡 제목만 더 크게 표시 */
   .bonus-subtitle {
-    font-size: calc(var(--bonus-subtitle-size) * 5 / 6);
+    font-size: 1.05rem;
     text-wrap: balance;
   }
 
   .track-number {
-    font-size: 1rem;
+    font-size: 0.85rem;
     margin-bottom: 0.25rem;
   }
 
   .album-track p {
-    font-size: 0.8125rem;
+    font-size: 0.65rem;
     margin-top: 0.25rem;
   }
 
   .bonus-label {
-    font-size: 0.6875rem;
+    font-size: 0.55rem;
     margin-top: 0.25rem;
   }
 
@@ -1040,8 +1251,44 @@ dd {
     gap: var(--space-2);
   }
 
-  .store-buttons span {
-    font-size: .75rem;
+  .store-buttons a {
+    font-size: 0.45rem;
+  }
+
+  /* 모바일 본문 크기만 조정: ABOUT·배너·공통 rem 여백은 유지 */
+  /* PC 공통 제목 2.25rem의 약 70% */
+  #tracklist .section-title, #info .section-title, #credit .section-title {
+    font-size: 1.60rem;
+  }
+
+
+  .album-information dd {
+    font-size: 1.05rem;
+  }
+
+  /* PC 크기의 약 70%를 0.05rem 간격으로 정리. 행간은 PC 규칙을 공통 사용 */
+  .credit-team dd, .artist-credit ul, .production-credit img {
+    font-size: 0.80rem;
+  }
+
+  #info dt, .store h3, .credit-team dt, .production-credit h3, .artist-credit h3 {
+    font-size: 0.45rem;
+  }
+
+  .track-summary, .bonus-note {
+    font-size: 0.55rem;
+  }
+
+  .jacket-download-label {
+    font-size: 0.65rem;
+  }
+
+  #footer {
+    font-size: 0.45rem;
+  }
+
+  #footer strong {
+    font-size: 0.65rem;
   }
 
   #credit {
@@ -1081,14 +1328,6 @@ dd {
 
 }
 
-/* 아주 작은 모바일: INFORMATION 제목 크기 */
-@media (max-width: 23.99rem) {
-  #info-title {
-    font-size: 1.75rem;
-  }
-
-}
-
 /* 움직임 줄이기 설정 */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -1100,7 +1339,7 @@ dd {
 /* 15. 스크롤 연출 — 크기·간격은 유지하고 한 번만 등장합니다. */
 :root {
   --motion-duration: 800ms;
-  --motion-rise: 1rem;
+  --motion-rise: 1.00rem;
   --motion-stagger: 60ms;
   --motion-ease: cubic-bezier(.22, 1, .36, 1);
 }
@@ -1154,9 +1393,9 @@ dd {
   translate: 0 var(--ornament-shift, 0px);
 }
 
-@media (max-width: 49.99rem) {
+@media (width < 50.00rem) {
   :root {
-    --motion-rise: .625rem;
+    --motion-rise: 0.65rem;
     --motion-duration: 650ms;
     --motion-stagger: 30ms;
   }
@@ -1211,7 +1450,7 @@ html.is-loading { overflow: hidden; }
 }
 
 .loader-window {
-  width: 7rem;
+  width: 7.00rem;
   aspect-ratio: 1;
   background: var(--gold);
   mask: url('../images/crepusculum/gothic-1.svg') center / contain no-repeat;
