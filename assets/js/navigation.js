@@ -1,6 +1,6 @@
 "use strict";
 
-// 배너 높이는 최초 표시 시 한 번만 고정합니다.
+// 배너 높이와 고정 메뉴의 기준 높이는 최초 표시 시 한 번만 고정합니다.
 // 주소창·스크롤·resize 이벤트에서는 이 값을 갱신하지 않습니다.
 // 새로고침하면 그때의 화면 높이로 다시 설정됩니다.
 const initialViewportHeight = document.documentElement.clientHeight || window.innerHeight;
@@ -63,7 +63,7 @@ if (links) {
     scheduled = false;
     if (!items.length) return;
 
-    const referenceY = window.innerHeight * 0.35;
+    const referenceY = initialViewportHeight * 0.35;
     let active = items[0];
     for (const item of items) {
       if (item.section.getBoundingClientRect().top <= referenceY) active = item;
@@ -108,7 +108,7 @@ const languageCopy = {
     "description": [
       "ゴシックの荘厳と",
       "エレクトロニックの狂気が",
-      "交わる黄昏。 ",
+      "交わる黄昏。[br]",
       "ジャンルもBPMも問わず、",
       "「ゴシック」の美学のもとに",
       "集ったアーティストたちが、",
@@ -126,7 +126,7 @@ const languageCopy = {
   },
   "ko": {
     "title": "진홍빛으로 스며드는 잔혹한 멜로디",
-    "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼. 장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
+    "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼.[br]장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
     "note": "*BONUS TRACK은 디스크에 수록되어 있지 않으며, 북클릿에 기재된 QR코드로 다운로드하실 수 있습니다.",
     "label": "언어 선택"
   }
@@ -139,18 +139,24 @@ if (languageSwitch) {
   const buttons = [...languageSwitch.querySelectorAll('button[data-language]')];
   const storageKey = 'crepusculum-mortis-language';
 
+  // 문구의 [br]을 실제 줄바꿈으로 변환합니다. HTML로 해석하지 않아 안전합니다.
   function setCopy(element, value) {
-    if (typeof value === 'string') {
-      element.textContent = value;
-      return;
+    function nodesWithBreaks(text, phrase = false) {
+      return text.split('[br]').flatMap((part, index) => {
+        const nodes = index ? [document.createElement('br')] : [];
+        if (!part) return nodes;
+        const node = phrase ? document.createElement('span') : document.createTextNode(part);
+        if (phrase) {
+          node.className = 'jp-phrase';
+          node.textContent = part;
+        }
+        return [...nodes, node];
+      });
     }
-    const phrases = value.map(text => {
-      const span = document.createElement('span');
-      span.className = 'jp-phrase';
-      span.textContent = text;
-      return span;
-    });
-    element.replaceChildren(...phrases);
+    const nodes = typeof value === 'string'
+      ? nodesWithBreaks(value)
+      : value.flatMap(text => nodesWithBreaks(text, true));
+    element.replaceChildren(...nodes);
   }
 
   function selectLanguage(language) {
@@ -270,7 +276,8 @@ if (languageSwitch) {
       x: random(-40, width),
       y: initial ? random(0, height) : -45,
       size: mobile ? random(14, 26) : random(20, 40),
-      fall: random(18, 36),
+      // 꽃잎 약 12%만 낙하 속도를 소폭 높여 자연스러운 변화를 줍니다.
+      fall: random(18, 36) * (Math.random() < .12 ? 1.18 : 1),
       drift: random(5, 16),
       sway: random(8, 22),
       phase: random(0, Math.PI * 2),
@@ -292,7 +299,7 @@ if (languageSwitch) {
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.filter = `blur(${getComputedStyle(canvas).getPropertyValue('--petal-blur').trim()})`;
-    const count = width < 576 ? 8 : 16;
+    const count = width < 576 ? 11 : 21;
     if (oldWidth && oldHeight) {
       petals.forEach(petal => {
         petal.x *= width / oldWidth;
@@ -344,7 +351,7 @@ if (languageSwitch) {
     }
     // 최대 30fps. 탭 복귀 시 큰 시간 차이로 꽃잎이 튀지 않게 합니다.
     const delta = time - previousTime;
-    if (delta < 1000 / 30) return;
+    if (delta < 1000 / 50) return;
     const seconds = Math.min(delta / 1000, .05);
     previousTime = time;
     elapsed += seconds;
