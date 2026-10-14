@@ -1,0 +1,977 @@
+/*
+  Crepusculum Mortis / main.css
+
+  빠르게 조정하기
+  - 색상·간격·글꼴·PC 배너: 01. 공통 설정
+  - 곡 사이 간격·보너스 부제: 07. 트랙리스트
+  - 태블릿·모바일 배치: 11. 반응형
+  - 글꼴 파일 등록: fonts.css (보통 수정할 필요 없음)
+
+  같은 선택자의 중복 규칙을 합쳤습니다.
+  속성은 한 줄에 하나씩 작성하고, 간격은 rem을 사용합니다.
+*/
+@import url("./fonts.css");
+
+/* ==================== 01. 공통 설정 ==================== */
+:root {
+  /* 간격 기준: 기본 0.5rem의 배수 */
+  --space-unit: 0.5rem;
+  --space-1: var(--space-unit);
+  --space-2: calc(var(--space-unit) * 2);
+  --space-3: calc(var(--space-unit) * 3);
+  --space-4: calc(var(--space-unit) * 4);
+  --space-5: calc(var(--space-unit) * 5);
+  --space-6: calc(var(--space-unit) * 6);
+  --space-8: calc(var(--space-unit) * 8);
+  --space-10: calc(var(--space-unit) * 10);
+  --space-12: calc(var(--space-unit) * 12);
+  --space-16: calc(var(--space-unit) * 16);
+  --space-24: calc(var(--space-unit) * 24);
+  --space-32: calc(var(--space-unit) * 32);
+  /* 색상 */
+  --bg: #2b0007;
+  --gold: #fdd23e;
+  --text: #fff7f1;
+  --muted: #c6adb0;
+  --line: #63313a;
+  /* 본문 너비와 섹션 간격 */
+  --content-width: 54rem;
+  --page-gutter: var(--space-4);
+  /* 모바일 본문 좌우 여백 */
+  --mobile-page-gutter: var(--space-6);
+  /* 태블릿: 네비게이션 공간을 포함한 좌우 여백 */
+  --tablet-page-gutter: var(--space-8);
+  --section-space: var(--space-10);
+  /* 트랙리스트 간격 */
+  --track-column-gap: var(--space-4);
+  --track-row-gap: var(--space-4);
+  /* PC 메인 배너: 태블릿과 모바일은 아래 반응형 항목에서 조정 */
+  --banner-logo-width: 42%;
+  --banner-logo-top: 55%;
+  --banner-logo-right: 4%;
+  /* 일러스트는 정사각형 원본 비율로 ABOUT까지 이어집니다. */
+  --viewport-height: 100vh; /* JS가 최초 화면 높이를 px로 고정합니다. JS 비활성 시 기본값 */
+  --banner-art-size: max(100vw, calc(var(--viewport-height) + 8rem));
+  --banner-art-left: 50%;
+  --banner-art-top: 0;
+  --banner-height: var(--viewport-height);
+  /* 보너스 곡 영문 부제: 음수 offset은 위로, 양수는 아래로 이동 */
+  --bonus-subtitle-size: 1.5rem;
+  --bonus-subtitle-offset: 0rem;
+  /* 글꼴 */
+  --body-font: 'Pretendard JP', 'Yu Gothic', Meiryo, sans-serif;
+  --sans-font: 'Josefin Sans', var(--body-font);
+  --display-font: 'Playfair Display', 'Kaisei Tokumin', 'Yu Mincho', serif;
+  --japanese-font: 'Kaisei Tokumin', 'Yu Mincho', serif;
+  --track-font: 'Grenze Gotisch', 'Kaisei Tokumin', serif;
+  --initial-font: 'Grenze Gotisch', var(--display-font);
+
+  --banner-logo-transform: translateY(-50%);
+  --banner-inset: clamp(2rem, 5vw, 4rem);
+  --banner-label-left: var(--banner-inset);
+  --banner-label-bottom: var(--banner-inset);
+  --nav-left: clamp(0.5rem, 4vw, 3.5rem);
+  --nav-gap: 0.25rem;
+  --nav-hit-size: 1.5rem;
+}
+
+/* ==================== 02. 기본 스타일과 접근성 ==================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--space-8);
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--sans-font);
+  /* ライニング数字: 높이와 자릿수 너비를 통일 */
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.5;
+}
+
+h1,h2,h3,p,ul,dl,dd {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: .25em;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: .125rem solid var(--gold);
+  outline-offset: var(--space-1);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 30;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: var(--space-2);
+  background: var(--text);
+  color: var(--bg);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.container {
+  width: min(var(--content-width), calc(100% - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+/* ==================== 03. 메뉴 ==================== */
+
+.site-header {
+  position: fixed;
+  z-index: 20;
+  left: var(--nav-left);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#navigation-links {
+  display: grid;
+  gap: var(--nav-gap);
+  padding: 0;
+  list-style: none;
+}
+
+#navigation-links a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--nav-hit-size);
+  font-size: .625rem;
+  letter-spacing: .08em;
+  position: relative;
+  justify-content: center;
+  width: var(--nav-hit-size);
+}
+
+#navigation-links a::before {
+  content: '';
+  width: .375rem;
+  height: .375rem;
+  border: .0625rem solid #ae8189;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+#navigation-links a span {
+  opacity: 0;
+  transition: opacity .2s;
+  position: absolute;
+  left: calc(var(--nav-hit-size) + var(--space-1));
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+#navigation-links a:hover span, #navigation-links a:focus-visible span {
+  opacity: 1;
+}
+
+#navigation-links a[aria-current]::before {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+/* ==================== 04. 메인 배너 ==================== */
+
+/* 배너와 ABOUT의 공통 배경. 배너 경계에서 일러스트를 자르지 않습니다. */
+.intro-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: var(--banner-art-size);
+}
+
+#banner {
+  position: relative;
+  height: var(--banner-height);
+}
+
+.banner-art {
+  position: absolute;
+  top: var(--banner-art-top);
+  left: var(--banner-art-left);
+  width: var(--banner-art-size);
+  height: auto;
+  max-width: none;
+  transform: translateX(-50%);
+  mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.catalog-mark {
+  position: absolute;
+  left: 6%;
+  top: 5%;
+  width: 4.5%;
+}
+
+.label-symbol {
+  position: absolute;
+  top: 3.5%;
+  right: 3.5%;
+  width: 4%;
+}
+
+#album-title {
+  position: absolute;
+  top: var(--banner-logo-top);
+  right: var(--banner-logo-right);
+  width: var(--banner-logo-width);
+  transform: var(--banner-logo-transform);
+}
+
+#album-title img {
+  width: 100%;
+}
+
+.banner-label {
+  position: absolute;
+  left: var(--banner-label-left);
+  width: 28%;
+  display: grid;
+  gap: var(--space-3);
+  bottom: var(--banner-label-bottom);
+}
+
+.compilation-mark {
+  width: 100%;
+}
+
+.label-wordmark {
+  width: 42%;
+}
+
+/* ==================== 05. 앨범 소개와 시청 영역 ==================== */
+
+#about {
+  position: relative;
+  padding-bottom: var(--space-6);
+  padding-top: var(--space-6);
+}
+
+.about-content {
+  text-align: center;
+  text-shadow: 0 0.125rem 0.5rem var(--bg);
+}
+
+#about-title {
+  color: var(--gold);
+  font-family: var(--japanese-font);
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.tagline-english {
+  margin-top: var(--space-1);
+  font-family: var(--display-font);
+  font-size: .875rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.about-description {
+  margin-top: var(--space-6);
+  font-size: .875rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+}
+
+.preview-placeholder {
+  width: min(100%, 40rem);
+  aspect-ratio: 16 / 9;
+  margin: var(--space-6) auto 0;
+  display: grid;
+  place-content: center;
+  gap: var(--space-1);
+  border: .0625rem solid var(--line);
+  background: #080002;
+  color: var(--muted);
+  font-size: .875rem;
+  letter-spacing: .12em;
+}
+
+.preview-placeholder span {
+  font-size: .625rem;
+}
+
+/* ==================== 06. 배경 장식과 섹션 제목 ==================== */
+
+/* 장식은 전체 본문 뒤에 놓고 가로 넘침만 제한합니다. */
+#main {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.ornament-region {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* 아치 윗부분이 INFO까지 이어지도록 세로 경계를 자르지 않습니다. */
+.credit-region {
+  position: relative;
+}
+
+.ornament {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ornament-window {
+  width: 100%;
+  right: -40%;
+  bottom: var(--space-8);
+  opacity: .8;
+}
+
+.ornament-arch {
+  width: 54%;
+  left: -13%;
+  bottom: 0;
+  opacity: .8;
+}
+
+#tracklist, #info, #credit {
+  padding-block: var(--space-6);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--gold);
+  font-family: var(--display-font);
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: .0625rem;
+  background: var(--line);
+}
+
+/* ==================== 07. 트랙리스트 ==================== */
+
+.track-summary {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.album-tracks {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: var(--track-row-gap) var(--track-column-gap);
+  margin-top: var(--space-5);
+}
+
+.album-track {
+  min-width: 0;
+}
+
+.track-number {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--gold);
+  font-family: var(--display-font);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ss01: 읽기 쉬운 대체 대문자. 첫 글자만 아래에서 끕니다. */
+
+.album-track h3 {
+  font-family: var(--track-font);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  font-feature-settings: 'ss01' 1;
+}
+
+.album-track h3::first-letter {
+  font-family: var(--initial-font);
+  font-feature-settings: 'ss01' 0;
+}
+
+.bonus-track h3::first-letter {
+  font-family: inherit;
+}
+
+.album-track p {
+  margin-top: var(--space-1);
+  font-size: .875rem;
+  overflow-wrap: anywhere;
+}
+
+.bonus-track {
+  grid-column: 1 / -1;
+}
+
+.bonus-label {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--gold);
+  font-size: .75rem;
+}
+
+/* 일본어 제목과 작은 영문 부제를 세로 중앙에 맞춥니다. */
+
+.bonus-track h3 {
+  font-family: var(--japanese-font);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem var(--space-1);
+}
+
+.bonus-main-title {
+  max-width: 100%;
+}
+
+/* 영문 부제 크기·위치는 위의 --bonus-subtitle-* 변수로 조정합니다. */
+
+.bonus-subtitle {
+  max-width: 100%;
+  font-family: var(--initial-font);
+  font-size: var(--bonus-subtitle-size);
+  line-height: 1.3;
+  font-feature-settings: "ss01" 1;
+  transform: translateY(var(--bonus-subtitle-offset));
+}
+
+/* ==================== 08. 앨범 정보와 구매 버튼 ==================== */
+
+#info {
+  padding-top: var(--section-space);
+}
+
+.information-layout {
+  display: grid;
+  grid-template-columns: 22rem minmax(0,1fr);
+  align-items: end;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.album-jacket {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.album-information {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: var(--space-4);
+}
+
+.info-title {
+  grid-column: 1 / -1;
+}
+
+/* INFORMATION 제목 크기는 별도로 유지합니다. */
+#info-title {
+  font-size: 3rem;
+}
+
+dt, .store h3, .production-credit h3, .artist-credit h3 {
+  color: var(--gold);
+  font-size: .625rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+}
+
+dd {
+  font-family: var(--body-font);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin-top: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.store {
+  margin-top: var(--space-4);
+}
+
+.store-buttons {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.store-buttons span {
+  display: grid;
+  place-items: center;
+  min-height: var(--space-6);
+  padding: var(--space-1);
+  border: .0625rem solid var(--line);
+  color: var(--muted);
+  font-size: .625rem;
+  text-transform: uppercase;
+}
+
+/* ==================== 09. 크레딧 ==================== */
+
+#credit {
+  padding-top: var(--section-space);
+  padding-bottom: var(--space-10);
+}
+
+.production-credit {
+  margin-top: var(--space-4);
+}
+
+.production-credit img {
+  width: 9rem;
+  margin-top: var(--space-1);
+}
+
+.credit-team {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.credit-team dd {
+  font-family: var(--display-font);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.artist-credit {
+  margin-top: var(--space-6);
+}
+
+.artist-credit ul {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-1);
+  column-gap: var(--space-1);
+  row-gap: .25rem;
+  font-family: var(--display-font);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.artist-credit li:not(:last-child)::after {
+  content: '|';
+  margin-left: var(--space-1);
+  color: var(--muted);
+}
+
+/* ==================== 10. 푸터 ==================== */
+
+#footer {
+  padding: var(--space-6) var(--page-gutter) var(--space-6);
+  text-align: center;
+  font-size: .625rem;
+}
+
+#footer strong {
+  font-family: var(--track-font);
+  font-size: .875rem;
+}
+
+/* ==================== 11. 반응형 ==================== */
+
+/* PC 배너: 양쪽 상단 마크와 하단 레이블에 같은 여백 기준을 사용 */
+@media (min-width: 75rem) {
+  :root {
+    --banner-inset: clamp(3rem, 6vw, 6rem);
+    --banner-logo-width: 46%;
+    /* 마지막 m 오른쪽 장식선은 SVG 폭의 약 9%: 본문 끝을 심볼과 정렬 */
+    --banner-logo-tail-ratio: 0.09;
+    --banner-logo-right: calc(var(--banner-inset) - var(--banner-logo-width) * var(--banner-logo-tail-ratio));
+    --banner-label-left: var(--banner-inset);
+    --banner-label-bottom: var(--banner-inset);
+  }
+
+  .catalog-mark {
+    top: var(--banner-inset);
+    left: var(--banner-inset);
+  }
+
+  .banner-label {
+    width: 26%;
+  }
+
+  .label-symbol {
+    top: var(--banner-inset);
+    right: var(--banner-inset);
+  }
+}
+
+/* 태블릿 이하: 메뉴, 본문 너비, 트랙 2열 */
+@media (max-width: 74.99rem) {
+  :root {
+    --content-width: 42rem;
+    --section-space: var(--space-8);
+    --track-column-gap: var(--space-4);
+  }
+
+  .album-tracks {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+
+  .information-layout {
+    grid-template-columns: 16rem minmax(0,1fr);
+  }
+
+  .credit-team {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+
+  dd {
+    font-size: 1.25rem;
+  }
+
+}
+
+/* 작은 태블릿 이하: 앨범 정보 세로 배치, 구매 버튼 1열 */
+@media (max-width: 49.99rem) {
+  :root {
+    --page-gutter: var(--mobile-page-gutter);
+  }
+
+  .catalog-mark {
+    top: var(--space-3);
+    left: var(--space-3);
+    width: 3rem;
+  }
+
+  .label-symbol {
+    width: 2.5rem;
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+
+  .banner-label {
+    left: var(--banner-inset);
+    width: 65%;
+    gap: var(--space-2);
+  }
+
+  .label-wordmark {
+    width: 48%;
+  }
+
+  #about {
+    padding-bottom: var(--space-6);
+  }
+
+  #about-title {
+    font-size: 1.5rem;
+  }
+
+  .tagline-english {
+    font-size: .625rem;
+    letter-spacing: .1em;
+  }
+
+  .about-description {
+    margin-top: var(--space-4);
+    letter-spacing: 0;
+    font-size: .75rem;
+  }
+
+  .about-description br {
+    display: none;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    gap: var(--space-2);
+  }
+
+  .information-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .album-jacket {
+    width: min(100%,22rem);
+    margin-inline: auto;
+  }
+
+  .credit-team {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+
+  .ornament-window {
+    width: 140%;
+    right: -70%;
+    opacity: .5;
+  }
+
+  .ornament-arch {
+    width: 110%;
+    left: -45%;
+    opacity: .5;
+  }
+
+  #info-title {
+    font-size: 2rem;
+  }
+
+  .section-title:not(#info-title) {
+    font-size: 1.75rem;
+  }
+
+  .store-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .store-buttons span {
+    min-height: var(--space-6);
+  }
+
+}
+
+/* 태블릿 공통: 576~1199px, 일정한 여백과 두 열 본문 */
+@media (min-width: 36rem) and (max-width: 74.99rem) {
+  :root {
+    /* 네비 버튼 오른쪽과 본문 사이에 최소 1.5rem을 확보합니다. */
+    --page-gutter: var(--tablet-page-gutter);
+    --nav-left: var(--space-2);
+    --banner-inset: var(--tablet-page-gutter);
+    --banner-logo-width: 50%;
+    --banner-logo-right: calc(var(--banner-inset) - var(--banner-logo-width) * 0.09);
+    --banner-label-left: var(--banner-inset);
+    --banner-label-bottom: var(--banner-inset);
+    --track-column-gap: 2rem;
+    --track-row-gap: 1.5rem;
+  }
+
+  .banner-label {
+    width: 32%;
+    max-width: 22rem;
+    left: var(--banner-inset);
+    gap: var(--space-2);
+  }
+
+  .label-wordmark {
+    width: 48%;
+  }
+
+  .catalog-mark {
+    width: 3rem;
+    left: var(--banner-inset);
+    top: var(--banner-inset);
+  }
+
+  .label-symbol {
+    width: 2.5rem;
+    top: var(--banner-inset);
+    right: var(--banner-inset);
+  }
+
+  .album-track h3 {
+    font-size: 1.375rem;
+  }
+
+  .track-number {
+    margin-bottom: var(--space-1);
+  }
+
+  #about-title {
+    font-size: 2rem;
+  }
+
+  .about-description {
+    font-size: 0.875rem;
+  }
+
+  .store-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 세로 태블릿: 넓은 중앙 제목과 캐릭터 중심의 구도 */
+@media (min-width: 36rem) and (max-width: 74.99rem) and (orientation: portrait) {
+  :root {
+    --banner-art-size: max(100vw, calc(var(--viewport-height) * 1.25));
+    --banner-art-left: 56%;
+    --banner-logo-width: 82%;
+    --banner-logo-right: 9%;
+    --banner-logo-top: 62%;
+    --banner-label-bottom: 8%;
+  }
+
+  .banner-label {
+    width: 48%;
+    max-width: 24rem;
+  }
+}
+
+/* 충분한 폭의 태블릿에서는 자켓과 정보를 나란히 배치 */
+@media (min-width: 44rem) and (max-width: 74.99rem) {
+  .information-layout {
+    grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.2fr);
+    gap: var(--space-4);
+  }
+
+  .album-jacket {
+    width: 100%;
+  }
+
+  .album-information dd {
+    font-size: 1.125rem;
+  }
+}
+
+/* 모바일: 공통 모바일 여백 유지, 트랙 1열, 배너 로고 중앙 */
+@media (max-width: 35.99rem) {
+  :root {
+    --track-row-gap: 1.25rem;
+    --bonus-subtitle-size: 0.9375rem;
+    --section-space: var(--space-6);
+    /* 모바일 초안: 얼굴은 상단 40%, 제목은 그 아래 65% 높이 */
+    --banner-art-size: max(100vw, calc(var(--viewport-height) * 1.7));
+    --banner-art-left: 72%;
+    --banner-art-top: calc(var(--viewport-height) * -0.04);
+    --banner-logo-top: 65%;
+    /* SVG 장식 여백을 포함하므로 글자 폭을 화면에 맞추려면 확대합니다. */
+    --banner-logo-width: 106%;
+    --banner-logo-right: auto;
+    /* 모바일은 왼쪽 기준: 가로 이동 없이 세로 위치만 조정 */
+    --banner-logo-transform: translateY(-50%);
+    --banner-inset: clamp(2rem, 8vw, 3rem);
+    --nav-left: 0.25rem;
+  }
+
+  #album-title {
+    left: 0;
+  }
+
+  .album-tracks {
+    grid-template-columns: 1fr;
+    margin-top: var(--space-4);
+  }
+
+  .album-track h3 {
+    font-size: 1.25rem;
+  }
+
+  .track-number {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .album-track p {
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+  }
+
+  .bonus-label {
+    font-size: 0.6875rem;
+    margin-top: 0.25rem;
+  }
+
+  .store-buttons {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .store-buttons span {
+    font-size: .75rem;
+  }
+
+  #credit {
+    padding-bottom: var(--space-8);
+  }
+
+  .catalog-mark, .banner-label {
+    left: var(--banner-inset);
+  }
+
+  /* 일본어 12글자를 본문 너비에 맞춰 한 줄로 표시합니다. */
+  .about-content {
+    container-type: inline-size;
+  }
+
+  #about-title {
+    font-size: calc(100cqi / 12);
+    white-space: nowrap;
+  }
+
+  .catalog-mark {
+    top: 7%;
+  }
+
+  .label-symbol {
+    top: 6%;
+    right: var(--banner-inset);
+  }
+
+  .banner-label {
+    width: min(72%, calc(100% - var(--banner-inset) * 2));
+  }
+
+  .preview-placeholder {
+    margin-top: var(--space-4);
+  }
+
+}
+
+/* 아주 작은 모바일: INFORMATION 제목 크기 */
+@media (max-width: 23.99rem) {
+  #info-title {
+    font-size: 1.75rem;
+  }
+
+}
+
+/* 움직임 줄이기 설정 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+}

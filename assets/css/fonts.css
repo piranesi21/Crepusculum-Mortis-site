@@ -1,0 +1,74 @@
+/* 로컬 웹폰트 등록. 화면 디자인은 main.css에서 조정하세요. */
+
+@font-face {
+  font-family: 'Grenze Gotisch';
+  src: url('../fonts/GrenzeGotisch.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard JP';
+  src: url('../fonts/PretendardJPVariable.woff2') format('woff2');
+  font-weight: 45 920;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('../fonts/PlayfairDisplay.woff2') format('woff2');
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kaisei Tokumin';
+  src: url('../fonts/KaiseiTokumin-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard JP';
+  src: url('../fonts/PretendardJPVariable-site.woff2') format('woff2');
+  font-weight: 45 920;
+  font-display: swap;
+  unicode-range:
+    U+20-24F, U+24B8, U+24C5, U+3001, U+3002, U+3005, U+3042, U+3044,
+    U+304B, U+304C, U+3057, U+305F, U+3061, U+3067, U+3068, U+306A,
+    U+306B, U+306E, U+307F, U+3080, U+3089, U+308A, U+308B, U+308C,
+    U+308F, U+30A2, U+30A3, U+30B3, U+30B7, U+30B8, U+30B9, U+30BA,
+    U+30BE, U+30C6, U+30C7, U+30C8, U+30D0, U+30D1, U+30D4, U+30E0,
+    U+30E3, U+30E7, U+30E9, U+30EA, U+30EB, U+30EC, U+30F3, U+30FC,
+    U+4E16, U+4EBA, U+51FA, U+5316, U+56FD, U+58F2, U+5F8B, U+64EC,
+    U+65B0, U+65CB, U+65E5, U+66F2, U+672C, U+67D3, U+69D8, U+6B8B,
+    U+6EA2, U+754C, U+767A, U+771F, U+79CB, U+7D05, U+7D42, U+8033,
+    U+8FBC, U+9177, U+97D3, U+FF01;
+}
+
+@font-face {
+  font-family: 'Kaisei Tokumin';
+  src: url('../fonts/KaiseiTokumin-Bold-site.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  unicode-range:
+    U+20-24F, U+24B8, U+24C5, U+3001, U+3002, U+3005, U+3042, U+3044,
+    U+304B, U+304C, U+3057, U+305F, U+3061, U+3067, U+3068, U+306A,
+    U+306B, U+306E, U+307F, U+3080, U+3089, U+308A, U+308B, U+308C,
+    U+308F, U+30A2, U+30A3, U+30B3, U+30B7, U+30B8, U+30B9, U+30BA,
+    U+30BE, U+30C6, U+30C7, U+30C8, U+30D0, U+30D1, U+30D4, U+30E0,
+    U+30E3, U+30E7, U+30E9, U+30EA, U+30EB, U+30EC, U+30F3, U+30FC,
+    U+4E16, U+4EBA, U+51FA, U+5316, U+56FD, U+58F2, U+5F8B, U+64EC,
+    U+65B0, U+65CB, U+65E5, U+66F2, U+672C, U+67D3, U+69D8, U+6B8B,
+    U+6EA2, U+754C, U+767A, U+771F, U+79CB, U+7D05, U+7D42, U+8033,
+    U+8FBC, U+9177, U+97D3, U+FF01;
+}
+
+/* 영문 산세리프만 Josefin Sans, 일본어·한국어는 Pretendard JP로 유지 */
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('../fonts/JosefinSans.ttf') format('truetype');
+  font-weight: 100 700;
+  font-display: swap;
+  unicode-range: U+20-024F;
+}
