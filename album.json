@@ -1,0 +1,296 @@
+{
+  "title": "Crepusculum Mortis",
+  "artist": "Various Artists",
+  "catalog": "MKWY-0030",
+  "release": "2026 秋M3",
+  "theme": "Gothic Electronic Music",
+  "tagline": "真紅に染み込む残酷な旋律",
+  "price_online_jpy": 2500,
+  "price_event_jpy": 2000,
+  "label": "milkyway TRAXX",
+  "tracks": [
+    {
+      "number": 1,
+      "artist": "Rabbit House",
+      "title": "Antipurgatorio",
+      "bonus": false
+    },
+    {
+      "number": 2,
+      "artist": "Tohrchu",
+      "title": "Say It In Red",
+      "bonus": false
+    },
+    {
+      "number": 3,
+      "artist": "M2U",
+      "title": "Breath of Venom",
+      "bonus": false
+    },
+    {
+      "number": 4,
+      "artist": "litmus*",
+      "title": "MAYHEM in MÄRCHEN",
+      "bonus": false
+    },
+    {
+      "number": 5,
+      "artist": "Laur",
+      "title": "Anti-Clockwise",
+      "bonus": false
+    },
+    {
+      "number": 6,
+      "artist": "gmtn.",
+      "title": "messaggio silfide",
+      "bonus": false
+    },
+    {
+      "number": 7,
+      "artist": "Juggernaut.",
+      "title": "Black Knight",
+      "bonus": false
+    },
+    {
+      "number": 8,
+      "artist": "CS4W",
+      "title": "WAHN",
+      "bonus": false
+    },
+    {
+      "number": 9,
+      "artist": "ZxNX",
+      "title": "VEX",
+      "bonus": false
+    },
+    {
+      "number": 10,
+      "artist": "AisE & FUT3R",
+      "title": "Ragnarøk",
+      "bonus": false
+    },
+    {
+      "number": 11,
+      "artist": "Kapoo",
+      "title": "Hellcaller",
+      "bonus": false
+    },
+    {
+      "number": 12,
+      "artist": "LucaProject VS Xeudo Code",
+      "title": "Thaumiel",
+      "bonus": false
+    },
+    {
+      "number": 13,
+      "artist": "Gram",
+      "title": "Akashic Ø",
+      "bonus": false
+    },
+    {
+      "number": 14,
+      "artist": "Team Grimoire",
+      "title": "Amechania",
+      "bonus": false
+    },
+    {
+      "number": 15,
+      "artist": "Hayato",
+      "title": "Death To The Empress",
+      "bonus": false
+    },
+    {
+      "number": 16,
+      "artist": "Asayami & Afflected Light ft. Neur6sia",
+      "title": "世界の終わりの擬人化 ~in the deep black rests the oak~",
+      "bonus": true
+    }
+  ],
+  "credits": [
+    {
+      "name": "Rabbit House",
+      "role": "Producer / Composer",
+      "links": [
+        "https://x.com/ri_neb",
+        "https://www.instagram.com/dksslqj/"
+      ]
+    },
+    {
+      "name": "litmus*",
+      "role": "Composer",
+      "links": [
+        "https://www.youtube.com/@litmus_star"
+      ]
+    },
+    {
+      "name": "M2U",
+      "role": "Composer",
+      "links": [
+        "https://x.com/m2ustudio"
+      ]
+    },
+    {
+      "name": "CS4W",
+      "role": "Composer",
+      "links": [
+        "https://x.com/CS4W_shiso"
+      ]
+    },
+    {
+      "name": "gmtn.",
+      "role": "Composer",
+      "links": [
+        "https://x.com/gumtune"
+      ]
+    },
+    {
+      "name": "Laur",
+      "role": "Composer",
+      "links": [
+        "https://x.com/LAUR1200"
+      ]
+    },
+    {
+      "name": "Asayami",
+      "role": "Composer",
+      "links": [
+        "https://x.com/ReeKDoesDTM"
+      ]
+    },
+    {
+      "name": "Gram",
+      "role": "Composer",
+      "links": [
+        "https://x.com/Gram_Requiem"
+      ]
+    },
+    {
+      "name": "Kapoo",
+      "role": "Composer",
+      "links": [
+        "https://x.com/Kapoomusic"
+      ]
+    },
+    {
+      "name": "Team Grimoire",
+      "role": "Composer",
+      "links": [
+        "https://x.com/teamgrimoire"
+      ]
+    },
+    {
+      "name": "ZxNX",
+      "role": "Composer",
+      "links": [
+        "https://x.com/NxTunes"
+      ]
+    },
+    {
+      "name": "Juggernaut.",
+      "role": "Composer",
+      "links": [
+        "https://x.com/jgnt_"
+      ]
+    },
+    {
+      "name": "shru",
+      "role": "Illustrator",
+      "links": [
+        "https://x.com/Ss_sl99"
+      ]
+    },
+    {
+      "name": "Piranesi",
+      "role": "Album Design / Website Design",
+      "links": [
+        "https://x.com/p1marks"
+      ]
+    },
+    {
+      "name": "A. Ki",
+      "role": "Mastering / Audio Engineer",
+      "links": [
+        "https://x.com/AKi_Sound"
+      ]
+    },
+    {
+      "name": "Tohrchu",
+      "role": "Composer",
+      "links": [
+        "https://linktr.ee/tohrchu"
+      ]
+    },
+    {
+      "name": "Hayato",
+      "role": "Composer",
+      "links": [
+        "https://x.com/Hayato_DTM"
+      ]
+    },
+    {
+      "name": "LucaProject",
+      "role": "Composer",
+      "links": [
+        "https://x.com/Lucaproject4543"
+      ]
+    },
+    {
+      "name": "AisE",
+      "role": "Composer",
+      "links": [
+        "https://x.com/aiceaise_"
+      ]
+    },
+    {
+      "name": "Xeudo Code",
+      "role": "Composer",
+      "links": [
+        "https://x.com/XeudoCode"
+      ]
+    },
+    {
+      "name": "FUT3R",
+      "role": "Composer",
+      "links": [
+        "https://x.com/fut3r_"
+      ]
+    },
+    {
+      "name": "Neur6sia",
+      "role": "Vocalist",
+      "links": [
+        "https://x.com/yeonsooyura"
+      ]
+    },
+    {
+      "name": "Zeth",
+      "role": "X-Fade PV / Video Producer",
+      "links": [
+        "https://linktr.ee/ZethZ161"
+      ]
+    },
+    {
+      "name": "L4hee",
+      "role": "Lyricist",
+      "links": [
+        "https://x.com/L4hee_"
+      ]
+    },
+    {
+      "name": "Afflected Light",
+      "role": "Composer",
+      "links": [
+        "https://x.com/ReeKDoesDTM"
+      ]
+    }
+  ],
+  "source": "https://docs.google.com/spreadsheets/d/1T1CqGIQ3NixKt1MybBrW4ukz4Y9dCAJ6ZnPDctXWa34/edit",
+  "source_checked": "2026-10-14",
+  "pending": [
+    "Exact release date",
+    "Booth number",
+    "Preview links",
+    "Purchase links",
+    "Approved cover image"
+  ]
+}
