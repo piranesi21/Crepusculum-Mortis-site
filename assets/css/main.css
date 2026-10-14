@@ -58,7 +58,7 @@
   --banner-art-size: max(100vw, calc(var(--banner-height) + 8rem));
   --banner-art-left: 50%;
   --banner-art-top: 0;
-  --banner-min-height: 40rem; /* 배너 최소 높이: 이 값만 조정하세요. */
+  --banner-min-height: 56.25vw; /* 배너 최소 높이: 이 값만 조정하세요. */
   --banner-height: max(var(--viewport-height), var(--banner-min-height));
   /* 보너스 곡 영문 부제: 음수 offset은 위로, 양수는 아래로 이동 */
   --bonus-subtitle-size: 1.5rem;
@@ -356,7 +356,7 @@ html:lang(ko) .bonus-note {
 #about {
   position: relative;
   padding-bottom: var(--space-6);
-  padding-top: var(--space-6);
+  padding-top: var(--space-12);
 }
 
 .about-content {
