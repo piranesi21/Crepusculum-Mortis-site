@@ -1,6 +1,6 @@
 "use strict";
 
-// 배너 높이는 최초 표시 시 한 번만 고정합니다.
+// 배너 높이와 고정 메뉴의 기준 높이는 최초 표시 시 한 번만 고정합니다.
 // 주소창·스크롤·resize 이벤트에서는 이 값을 갱신하지 않습니다.
 // 새로고침하면 그때의 화면 높이로 다시 설정됩니다.
 const initialViewportHeight = document.documentElement.clientHeight || window.innerHeight;
@@ -63,7 +63,7 @@ if (links) {
     scheduled = false;
     if (!items.length) return;
 
-    const referenceY = window.innerHeight * 0.35;
+    const referenceY = initialViewportHeight * 0.35;
     let active = items[0];
     for (const item of items) {
       if (item.section.getBoundingClientRect().top <= referenceY) active = item;
@@ -344,7 +344,7 @@ if (languageSwitch) {
     }
     // 최대 30fps. 탭 복귀 시 큰 시간 차이로 꽃잎이 튀지 않게 합니다.
     const delta = time - previousTime;
-    if (delta < 1000 / 30) return;
+    if (delta < 1000 / 50) return;
     const seconds = Math.min(delta / 1000, .05);
     previousTime = time;
     elapsed += seconds;

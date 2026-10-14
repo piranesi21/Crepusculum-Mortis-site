@@ -58,7 +58,7 @@
   --banner-art-size: max(100vw, calc(var(--banner-height) + 8.00rem));
   --banner-art-left: 50%;
   --banner-art-top: 0;
-  --banner-min-height: min(55svw, 95svh);
+  --banner-min-height: min(55vw, calc(var(--viewport-height) * 0.95));
   --banner-height: max(var(--viewport-height), var(--banner-min-height));
   /* 보너스 곡 영문 부제: 음수 offset은 위로, 양수는 아래로 이동 */
   --bonus-subtitle-size: 1.50rem;
@@ -87,6 +87,7 @@
 }
 
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: var(--space-8);
 }
@@ -155,7 +156,8 @@ a:hover {
   position: fixed;
   z-index: 20;
   left: var(--nav-left);
-  top: 50%;
+  /* 주소창이 접혀도 최초 화면의 세로 중앙을 유지 */
+  top: calc(var(--viewport-height) * 0.5);
   transform: translateY(-50%);
 }
 
@@ -212,7 +214,9 @@ a:hover {
   position: fixed;
   z-index: 25;
   right: max(1.00rem, env(safe-area-inset-right));
-  bottom: max(1.00rem, env(safe-area-inset-bottom));
+  /* 최초 화면 하단 기준으로 고정: 주소창 높이 변화에 따라 이동하지 않음 */
+  top: calc(var(--viewport-height) - max(1.00rem, env(safe-area-inset-bottom)));
+  transform: translateY(-100%);
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem;
@@ -407,8 +411,6 @@ html:lang(ko) .bonus-note {
   aspect-ratio: 16 / 9;
   margin: var(--space-6) auto 0;
   display: grid;
-  place-content: center;
-  gap: var(--space-1);
   border: 1px solid var(--line);
   background: #080002;
   color: var(--muted);
@@ -416,8 +418,11 @@ html:lang(ko) .bonus-note {
   letter-spacing: 0.10em;
 }
 
-.preview-placeholder span {
-  font-size: 0.65rem;
+.preview-placeholder iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 /* ==================== 06. 배경 장식과 섹션 제목 ==================== */
@@ -429,10 +434,11 @@ html:lang(ko) .bonus-note {
   overflow-x: clip;
 }
 
+/* 가로 넘침은 #main에서만 제한하고 장식의 세로 방향은 자르지 않습니다. */
 .ornament-region {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* 아치 윗부분이 INFO까지 이어지도록 세로 경계를 자르지 않습니다. */
@@ -585,6 +591,7 @@ html:lang(ko) .bonus-note {
 /* ==================== 08. 앨범 정보와 구매 버튼 ==================== */
 
 #info {
+  --info-label-gap: 0.75rem;
   padding-top: var(--section-space);
 }
 
@@ -659,6 +666,31 @@ html:lang(ko) .bonus-note {
   gap: var(--space-4);
 }
 
+/* 정보 소제목과 값 사이: ONLINE STORE와 같은 0.75rem 간격 */
+.album-information > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--info-label-gap);
+}
+
+.album-information dt, .store h3 {
+  line-height: 1;
+}
+
+.album-information dd {
+  margin-top: 0;
+  line-height: 1.15;
+}
+
+/* 글꼴 내부의 위아래 여백을 제거한 뒤 실제 대문자 윗선·기준선으로 간격 계산 */
+@supports (text-box: trim-both cap alphabetic) {
+  .album-information dt,
+  .album-information dd,
+  .store h3 {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
 .info-title {
   grid-column: 1 / -1;
 }
@@ -678,11 +710,13 @@ dd {
   overflow-wrap: anywhere;
 }
 
-/* 앨범명만 트랙 제목과 같은 굵은 블랙레터로 표시 */
-.album-information .info-title dd {
-  font-family: var(--track-font);
-  font-weight: 700;
-  font-feature-settings: 'ss01' 0;
+/* PC·태블릿: 정보 글자 크기의 1.5배 높이 이내에서 SVG 비율 유지 */
+.info-album-logo {
+  width: 100%;
+  height: auto;
+  max-height: 1.50em;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .store {
@@ -693,10 +727,10 @@ dd {
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
   gap: var(--space-2);
-  margin-top: var(--space-1);
+  margin-top: var(--info-label-gap);
 }
 
-.store-buttons span {
+.store-buttons a {
   display: grid;
   place-items: center;
   min-height: var(--space-6);
@@ -705,6 +739,31 @@ dd {
   color: var(--muted);
   font-size: 0.65rem;
   text-transform: uppercase;
+  text-decoration: none;
+  transition: color 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+@media (hover: hover) {
+  .store-buttons a:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background-color: rgb(255 215 0 / 6%);
+  }
+}
+
+.store-buttons a:focus-visible {
+  color: var(--gold);
+  border-color: var(--gold);
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.store-buttons a:active {
+  background-color: rgb(255 215 0 / 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .store-buttons a { transition: none; }
 }
 
 /* ==================== 09. 크레딧 ==================== */
@@ -715,29 +774,101 @@ dd {
 }
 
 .production-credit {
-  margin-top: var(--space-4);
+  margin-top: 3.50rem;
 }
 
 .production-credit img {
-  width: 9.00rem;
-  margin-top: var(--space-1);
+  /* 아티스트명과 같은 font-size를 기준으로 로고도 비례 축소 */
+  font-size: 1.15rem;
+  width: 7.85em;
+  margin-top: 0;
+  opacity: 0; /* 이미지 크기는 유지하고 실제 색은 링크의 currentColor로 표시 */
 }
+
+/* 크레딧 공통: 금색 전환·은은한 빛·왼쪽에서 펼쳐지는 밑줄 */
+.production-credit a,
+.credit-team a,
+.artist-credit a {
+  text-decoration: none;
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 1px;
+  transition: color 250ms ease, text-shadow 250ms ease, background-size 250ms ease;
+}
+
+.production-credit a {
+  position: relative;
+  display: table;
+  margin-top: 0.75rem;
+}
+
+/* 텍스트와 동일한 --gold를 사용해 로고도 정확히 같은 금색으로 전환 */
+.production-credit a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  mask: url('../images/crepusculum/milkyway_logo_text.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .production-credit a:hover,
+  .credit-team a:hover,
+  .artist-credit a:hover {
+    color: var(--gold);
+    text-shadow: 0 0 0.50rem rgb(253 210 62 / 25%);
+    background-size: 100% 1px;
+  }
+}
+
+.production-credit a:focus-visible,
+.credit-team a:focus-visible,
+.artist-credit a:focus-visible {
+  color: var(--gold);
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .production-credit a,
+  .production-credit img,
+  .credit-team a,
+  .artist-credit a {
+    transition: none;
+  }
+}
+
+/* 로고 위 간격을 기준으로 소제목 아래·이름 위의 글꼴 내부 여백만 제거 */
+@supports (text-box: trim-both cap alphabetic) {
+  .production-credit h3,
+  .credit-team dt,
+  .artist-credit h3 {
+    text-box: trim-end cap alphabetic;
+  }
+
+  .credit-team dd {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
 
 .credit-team {
   display: grid;
   grid-template-columns: repeat(4,minmax(0,1fr));
   gap: var(--space-4);
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
 }
 
 .credit-team dd {
+  margin-top: 0.75rem;
   font-family: var(--display-font);
   font-size: 1.15rem;
   font-weight: 600;
 }
 
 .artist-credit {
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
 }
 
 .artist-credit ul {
@@ -753,6 +884,14 @@ dd {
   font-family: var(--display-font);
   font-size: 1.15rem;
   font-weight: 600;
+  line-height: 1.5;
+}
+
+/* 각 행의 line-height는 유지하고 목록 전체의 윗여백만 보정 */
+@supports (text-box: trim-start cap alphabetic) {
+  .artist-credit ul {
+    margin-top: calc(0.75rem - 0.30em);
+  }
 }
 
 .artist-credit li {
@@ -782,12 +921,13 @@ dd {
   pointer-events: none;
   padding: var(--space-6) var(--page-gutter) var(--space-10);
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
+  line-height: 1.75em;
 }
 
 #footer strong {
   font-family: var(--track-font);
-  font-size: 0.90rem;
+  font-size: 1rem;
 }
 
 /* ==================== 11. 반응형 ==================== */
@@ -932,7 +1072,7 @@ dd {
     grid-template-columns: 1fr;
   }
 
-  .store-buttons span {
+  .store-buttons a {
     min-height: var(--space-6);
   }
 
@@ -940,6 +1080,7 @@ dd {
 
 /* 태블릿 공통: 576~1199px, 일정한 여백과 두 열 본문 */
 @media (min-width: 36.00rem) and (width < 75.00rem) {
+
   :root {
     /* 네비 버튼 오른쪽과 본문 사이에 최소 1.5rem을 확보합니다. */
     --page-gutter: var(--tablet-page-gutter);
@@ -1032,6 +1173,27 @@ dd {
 
 /* 모바일: 공통 모바일 여백 유지, 트랙 1열, 배너 로고 중앙 */
 @media (width < 36.00rem) {
+  .info-album-logo {
+    max-height: none;
+  }
+
+  /* 언어 선택은 PC 크기를 유지하고 모바일에서만 간결하게 표시 */
+  .language-switch {
+    gap: 0.15rem;
+    padding: 0.15rem;
+  }
+
+  .language-switch button {
+    min-width: 2.50rem;
+    min-height: 2.50rem;
+    padding: 0.35rem;
+    font-size: 0.70rem;
+  }
+
+  .language-switch > span {
+    font-size: 0.75rem;
+  }
+
   :root {
     --track-row-gap: 1.25rem;
     --section-space: var(--space-6);
@@ -1060,10 +1222,10 @@ dd {
   }
 
   .album-track h3 {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
   }
 
-  /* PC와 같은 곡명·영문 부제 크기 비율 */
+  /* 영문 부제 크기는 유지하고, 위의 곡 제목만 더 크게 표시 */
   .bonus-subtitle {
     font-size: 1.05rem;
     text-wrap: balance;
@@ -1089,7 +1251,7 @@ dd {
     gap: var(--space-2);
   }
 
-  .store-buttons span {
+  .store-buttons a {
     font-size: 0.45rem;
   }
 
@@ -1099,12 +1261,13 @@ dd {
     font-size: 1.60rem;
   }
 
+
   .album-information dd {
     font-size: 1.05rem;
   }
 
   /* PC 크기의 약 70%를 0.05rem 간격으로 정리. 행간은 PC 규칙을 공통 사용 */
-  .credit-team dd, .artist-credit ul {
+  .credit-team dd, .artist-credit ul, .production-credit img {
     font-size: 0.80rem;
   }
 
