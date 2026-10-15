@@ -99,7 +99,7 @@
       anchor.addEventListener('pointerleave', () => {
         if (hoveredAnchor !== anchor) return;
         clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(clearNavigationHover, 2000);
+        hoverTimeout = setTimeout(clearNavigationHover, 1000);
       });
     }
     hoverPreference.addEventListener('change', clearNavigationHover);
@@ -281,7 +281,8 @@
     }
 
     function scheduleOrnament(event) {
-      if (portraitOrnament.matches && event?.type === 'scroll') return;
+      if (event?.type === 'scroll' &&
+          (motionPreference.matches || portraitOrnament.matches || !desktopMotion.matches)) return;
       if (!ornamentFrameId) ornamentFrameId = requestAnimationFrame(updateOrnament);
     }
 
@@ -353,10 +354,21 @@
     let pixelRatio = 0;
     let petalsPaused = false;
     const petalToggle = document.querySelector('.petal-toggle');
-    const frameIntervalMs = 1000 / 30;
+    const saveData = navigator.connection?.saveData === true;
+    const frameIntervalMs = 1000 / (saveData ? 20 : 30);
     let resizeFrameId = 0;
     const videoExclusions = [...document.querySelectorAll('.crossfade-preview, #main video, #main iframe')]
       .filter(player => player.matches('.crossfade-preview') || !player.closest('.crossfade-preview'));
+    const activeVideoExclusions = new Set(videoExclusions);
+    if (videoExclusions.length && 'IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) activeVideoExclusions.add(entry.target);
+          else activeVideoExclusions.delete(entry.target);
+        }
+      }, { rootMargin: '64px' });
+      videoExclusions.forEach(player => videoObserver.observe(player));
+    }
     const random = (min, max) => min + Math.random() * (max - min);
 
     function createPetal(initial = false, previousPetal = null) {
@@ -396,7 +408,7 @@
       canvas.height = Math.round(canvasHeight * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       if (rebuildSprites) petals.forEach(petal => { petal.sprite = createPetalSprite(petal); });
-      const count = canvasWidth < 576 ? 11 : 21;
+      const count = saveData ? (canvasWidth < 576 ? 6 : 10) : (canvasWidth < 576 ? 11 : 21);
       if (oldWidth && oldHeight) {
         petals.forEach(petal => {
           petal.x *= canvasWidth / oldWidth;
@@ -468,18 +480,20 @@
       previousFrameTime = time;
       elapsedSeconds += deltaSeconds;
       context.clearRect(0, 0, canvasWidth, canvasHeight);
-      // X-FADE와 영상 플레이어 영역을 그리기에서 제외합니다.
-      // 스크롤·등장 효과에 따라 달라지는 화면 좌표를 매 프레임 반영합니다.
-      context.save();
-      context.beginPath();
-      context.rect(0, 0, canvasWidth, canvasHeight);
-      videoExclusions.forEach(player => {
-        const bounds = player.getBoundingClientRect();
-        if (bounds.bottom > 0 && bounds.top < canvasHeight && bounds.width && bounds.height) {
-          context.rect(bounds.left - 2, bounds.top - 2, bounds.width + 4, bounds.height + 4);
-        }
-      });
-      context.clip('evenodd');
+      // 영상이 화면에 접근할 때만 좌표를 읽고, 등장 효과 중에도 가림을 방지합니다.
+      const clipVideos = activeVideoExclusions.size > 0;
+      if (clipVideos) {
+        context.save();
+        context.beginPath();
+        context.rect(0, 0, canvasWidth, canvasHeight);
+        activeVideoExclusions.forEach(player => {
+          const bounds = player.getBoundingClientRect();
+          if (bounds.bottom > 0 && bounds.top < canvasHeight && bounds.width && bounds.height) {
+            context.rect(bounds.left - 2, bounds.top - 2, bounds.width + 4, bounds.height + 4);
+          }
+        });
+        context.clip('evenodd');
+      }
       petals.forEach((petal, index) => {
         petal.x += petal.drift * deltaSeconds;
         petal.y += petal.fall * deltaSeconds;
@@ -490,7 +504,7 @@
           drawPetal(petal);
         }
       });
-      context.restore();
+      if (clipVideos) context.restore();
     }
 
     function syncMotion() {

@@ -153,6 +153,7 @@ a:hover {
 }
 
 #navigation-links a {
+  font-family: var(--display-font);
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -351,6 +352,10 @@ html:lang(ko) .bonus-note {
 #album-title img {
   width: calc(100% / var(--album-logo-visible-ratio));
   max-width: none;
+}
+
+.banner-bottom {
+  display: contents;
 }
 
 .banner-label {
@@ -740,6 +745,11 @@ dd {
 }
 
 .store-buttons a {
+  font-family: var(--display-font);
+  font-weight: 700;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   place-items: center;
   min-height: var(--space-6);
@@ -750,12 +760,34 @@ dd {
   line-height: 1;
   text-transform: uppercase;
   text-decoration: none;
-  transition: color 220ms ease, border-color 220ms ease, background-color 220ms ease;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.store-buttons a:not([href="#"]) {
+  border-color: #fff;
+}
+
+.store-buttons a:not([href="#"])::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
 }
 
 .store-button-label {
   display: inline-block;
-  transform: translateY(0.10em);
+  transform: translateY(-0.05em);
+}
+
+@supports (text-box: trim-both cap alphabetic) {
+  .store-button-label {
+    text-box: trim-both cap alphabetic;
+    transform: none;
+  }
 }
 
 .store-buttons a[href="#"] {
@@ -767,25 +799,37 @@ dd {
   opacity: 0.50;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .store-buttons a:not([href="#"]):hover {
+    color: var(--bg);
     border-color: var(--gold);
-    background-color: rgb(255 215 0 / 6%);
+  }
+
+  .store-buttons a:not([href="#"]):hover::before {
+    opacity: 1;
   }
 }
 
-.store-buttons a:focus-visible {
+.store-buttons a:not([href="#"]):focus-visible {
+  color: var(--bg);
   border-color: var(--gold);
   outline: 1px solid var(--gold);
   outline-offset: 3px;
 }
 
+.store-buttons a:not([href="#"]):focus-visible::before {
+  opacity: 1;
+}
+
 .store-buttons a:not([href="#"]):active {
-  background-color: rgb(255 215 0 / 10%);
+  color: var(--bg);
+  border-color: var(--gold);
+  background-color: var(--gold);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .store-buttons a { transition: none; }
+  .store-buttons a,
+  .store-buttons a::before { transition: none; }
 }
 
 /* ==================== 09. 크레딧 ==================== */
@@ -1030,10 +1074,6 @@ dd {
     width: 48%;
   }
 
-  #about {
-    padding-bottom: var(--space-6);
-  }
-
   #about-title {
     font-size: 1.50rem;
   }
@@ -1050,7 +1090,7 @@ dd {
   }
 
   .section-title {
-    font-size: 2.00rem;
+    font-size: 1.75rem;
     gap: var(--space-2);
   }
 
@@ -1072,18 +1112,12 @@ dd {
     width: 140%;
     right: -70%;
     --ornament-opacity: .5;
-    opacity: var(--ornament-opacity);
   }
 
   .ornament-arch {
     width: 110%;
     left: -45%;
     --ornament-opacity: .5;
-    opacity: var(--ornament-opacity);
-  }
-
-  .section-title {
-    font-size: 1.75rem;
   }
 
   .store-buttons {
@@ -1201,15 +1235,12 @@ dd {
   }
 }
 
-/* 모바일: 공통 모바일 여백 유지, 트랙 1열, 배너 로고 중앙 */
+/* 모바일: 얼굴 중심 보정, 하단 로고 그룹, 트랙 1열 */
 @media (width < 36.00rem) {
   .ornament-arch {
     width: 90%;
     left: -4%;
   }
-
-
-
 
   .info-album-logo {
     max-height: none;
@@ -1236,21 +1267,37 @@ dd {
     --section-space: var(--space-6);
 
     --banner-art-size: max(100vw, calc(var(--banner-height) * 1.7));
-    --banner-art-left: 72%;
-    --banner-art-top: calc(var(--banner-height) * -0.04);
-    --banner-logo-top: 65%;
+    --banner-art-left: calc(45% + var(--banner-art-size) * 0.105);
+    --banner-art-top: calc(var(--banner-height) * 0.5 - var(--banner-art-size) * 0.28);
 
     --album-logo-right-inset: 21;
     --banner-logo-width: 100%;
     --banner-logo-right: auto;
 
-    --banner-logo-transform: translateY(-50%);
     --banner-inset: clamp(2.00rem, 8vw, 3.00rem);
     --nav-left: 0.25rem;
   }
 
+  .banner-bottom {
+    position: absolute;
+    inset: auto 0 var(--banner-label-bottom);
+    display: grid;
+    gap: var(--space-8);
+  }
+
   #album-title {
+    position: relative;
+    top: auto;
     left: 0;
+    min-width: 0;
+    transform: none;
+  }
+
+  .banner-bottom .banner-label {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin-left: var(--banner-label-left);
   }
 
   .album-tracks {
@@ -1590,8 +1637,8 @@ html.is-loading { overflow: hidden; }
   transition: transform 180ms ease;
 }
 
-.petal-toggle[aria-checked="true"] { color: var(--gold); }
-.petal-toggle[aria-checked="true"] .petal-toggle-track::before { transform: translateX(1.20rem); }
+.petal-toggle[aria-checked="true"] { color: #fff; }
+.petal-toggle[aria-checked="true"] .petal-toggle-track::before { opacity: 1; transform: translateX(1.20rem); }
 
 @media (prefers-reduced-motion: reduce) {
   .petal-toggle-track::before, .petal-toggle::after { transition: none; }
