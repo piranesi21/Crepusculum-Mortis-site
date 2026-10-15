@@ -99,7 +99,7 @@
       anchor.addEventListener('pointerleave', () => {
         if (hoveredAnchor !== anchor) return;
         clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(clearNavigationHover, 1000);
+        hoverTimeout = setTimeout(clearNavigationHover, 200);
       });
     }
     hoverPreference.addEventListener('change', clearNavigationHover);
@@ -170,15 +170,27 @@
         "QRコードより",
         "ダウンロードいただけます。"
       ],
-      "petals": "PETAL — 花びらアニメーション",
-      "label": "言語選択"
+      "label": "言語選択",
+      "petals": "花びらアニメーション",
+      "albumArt": "Crepusculum Mortisのアルバムアートをダウンロード（新しいタブで開く）",
+      "albumArtAlt": "Crepusculum Mortisのアルバムアート、イラスト：shru",
+      "navigation": "メインナビゲーション",
+      "loading": "Crepusculum Mortisを読み込み中",
+      "credits": "milkyway TRAXXのクレジットへ移動",
+      "official": "milkyway TRAXX公式X"
     },
     "ko": {
       "title": "진홍빛으로 스며드는 잔혹한 멜로디",
       "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼.[br]장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
       "note": "*BONUS TRACK은 디스크에 수록되어 있지 않으며, 북클릿에 기재된 QR코드로 다운로드하실 수 있습니다.",
-      "petals": "PETAL — 꽃잎 애니메이션",
-      "label": "언어 선택"
+      "label": "언어 선택",
+      "petals": "꽃잎 애니메이션",
+      "albumArt": "Crepusculum Mortis 앨범아트 다운로드 (새 탭에서 열기)",
+      "albumArtAlt": "Crepusculum Mortis 앨범아트, 일러스트: shru",
+      "navigation": "주요 탐색",
+      "loading": "Crepusculum Mortis 불러오는 중",
+      "credits": "milkyway TRAXX 크레딧으로 이동",
+      "official": "milkyway TRAXX 공식 X"
     }
   };
   const languageSwitch = document.querySelector('.language-switch');
@@ -216,10 +228,22 @@
       title.textContent = text.title;
       setCopy(description, text.description);
       setCopy(note, text.note);
+      languageSwitch.lang = language;
       languageSwitch.setAttribute('aria-label', text.label);
-      const petalToggle = document.querySelector('.petal-toggle');
-      petalToggle?.setAttribute('lang', language);
-      petalToggle?.setAttribute('aria-label', text.petals);
+      for (const [selector, label] of [
+        ['.petal-toggle', text.petals],
+        ['.album-jacket', text.albumArt],
+        ['#nav', text.navigation],
+        ['.page-loader', text.loading],
+        ['.label-symbol', text.credits],
+        ['.production-credit a', text.official]
+      ]) {
+        const element = document.querySelector(selector);
+        if (!element) continue;
+        element.lang = language;
+        element.setAttribute('aria-label', label);
+      }
+      document.querySelector('.album-jacket img')?.setAttribute('alt', text.albumArtAlt);
       buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === language)));
       if (persist) {
         try { localStorage.setItem(storageKey, language); } catch { /* 저장 차단 시에도 전환 가능 */ }

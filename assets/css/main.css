@@ -650,7 +650,7 @@ html:lang(ko) .bonus-note {
   z-index: 1;
   inset: auto 1.00rem 1.00rem;
   color: var(--text);
-  font: 500 0.90rem/1.5 var(--display-font);
+  font: 500 1.20rem/1.5 var(--display-font);
   text-align: right;
   opacity: 0;
   transition: opacity 250ms ease;
@@ -843,12 +843,14 @@ dd {
   margin-top: 3.50rem;
 }
 
-.production-credit img {
+.production-credit .production-logo {
 
   font-size: 1.15rem;
   width: 7.85em;
   margin-top: 0;
-  opacity: 0; /* 이미지 크기는 유지하고 실제 색은 링크의 currentColor로 표시 */
+  height: auto;
+  display: block;
+  fill: currentColor;
 }
 
 .production-credit a,
@@ -868,14 +870,6 @@ dd {
   margin-top: 0.75rem;
 }
 
-.production-credit a::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: currentColor;
-  mask: url('../images/milkyway_logo_text.svg') center / contain no-repeat;
-  pointer-events: none;
-}
 
 @media (hover: hover) {
   .production-credit a:hover,
@@ -896,7 +890,7 @@ dd {
 
 @media (prefers-reduced-motion: reduce) {
   .production-credit a,
-  .production-credit img,
+  .production-credit .production-logo,
   .credit-team a,
   .artist-credit a {
     transition: none;
@@ -1350,7 +1344,7 @@ dd {
     font-size: 1.05rem;
   }
 
-  .credit-team dd, .artist-credit ul, .production-credit img {
+  .credit-team dd, .artist-credit ul, .production-credit .production-logo {
     font-size: 0.80rem;
   }
 
@@ -1363,7 +1357,7 @@ dd {
   }
 
   .jacket-download-label {
-    font-size: 0.65rem;
+    font-size: 0.85rem;
   }
 
   #footer {
