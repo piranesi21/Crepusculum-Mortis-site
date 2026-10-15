@@ -108,7 +108,7 @@ const languageCopy = {
     "description": [
       "ゴシックの荘厳と",
       "エレクトロニックの狂気が",
-      "交わる黄昏。 ",
+      "交わる黄昏。[br]",
       "ジャンルもBPMも問わず、",
       "「ゴシック」の美学のもとに",
       "集ったアーティストたちが、",
@@ -126,7 +126,7 @@ const languageCopy = {
   },
   "ko": {
     "title": "진홍빛으로 스며드는 잔혹한 멜로디",
-    "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼. 장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
+    "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼.[br]장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
     "note": "*BONUS TRACK은 디스크에 수록되어 있지 않으며, 북클릿에 기재된 QR코드로 다운로드하실 수 있습니다.",
     "label": "언어 선택"
   }
@@ -139,18 +139,24 @@ if (languageSwitch) {
   const buttons = [...languageSwitch.querySelectorAll('button[data-language]')];
   const storageKey = 'crepusculum-mortis-language';
 
+  // 문구의 [br]을 실제 줄바꿈으로 변환합니다. HTML로 해석하지 않아 안전합니다.
   function setCopy(element, value) {
-    if (typeof value === 'string') {
-      element.textContent = value;
-      return;
+    function nodesWithBreaks(text, phrase = false) {
+      return text.split('[br]').flatMap((part, index) => {
+        const nodes = index ? [document.createElement('br')] : [];
+        if (!part) return nodes;
+        const node = phrase ? document.createElement('span') : document.createTextNode(part);
+        if (phrase) {
+          node.className = 'jp-phrase';
+          node.textContent = part;
+        }
+        return [...nodes, node];
+      });
     }
-    const phrases = value.map(text => {
-      const span = document.createElement('span');
-      span.className = 'jp-phrase';
-      span.textContent = text;
-      return span;
-    });
-    element.replaceChildren(...phrases);
+    const nodes = typeof value === 'string'
+      ? nodesWithBreaks(value)
+      : value.flatMap(text => nodesWithBreaks(text, true));
+    element.replaceChildren(...nodes);
   }
 
   function selectLanguage(language) {
@@ -262,15 +268,20 @@ if (languageSwitch) {
   let frame = 0;
   let previousTime = 0;
   let elapsed = 0;
+  let petalBlur = 4;
+  let resizeFrame = 0;
+  const players = [...document.querySelectorAll('.preview-placeholder, #main video, #main iframe')]
+    .filter(player => player.matches('.preview-placeholder') || !player.closest('.preview-placeholder'));
   const random = (min, max) => min + Math.random() * (max - min);
 
   function newPetal(initial = false) {
     const mobile = width < 576;
-    return {
+    const petal = {
       x: random(-40, width),
       y: initial ? random(0, height) : -45,
       size: mobile ? random(14, 26) : random(20, 40),
-      fall: random(18, 36),
+      // 꽃잎 약 12%만 낙하 속도를 소폭 높여 자연스러운 변화를 줍니다.
+      fall: random(18, 36) * (Math.random() < .12 ? 1.18 : 1),
       drift: random(5, 16),
       sway: random(8, 22),
       phase: random(0, Math.PI * 2),
@@ -279,9 +290,12 @@ if (languageSwitch) {
       opacity: random(.35, .65),
       folded: Math.random() > .5
     };
+    petal.sprite = createPetalSprite(petal);
+    return petal;
   }
 
   function resize() {
+    resizeFrame = 0;
     const oldWidth = width;
     const oldHeight = height;
     width = window.innerWidth;
@@ -291,8 +305,9 @@ if (languageSwitch) {
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.filter = `blur(${getComputedStyle(canvas).getPropertyValue('--petal-blur').trim()})`;
-    const count = width < 576 ? 8 : 16;
+    petalBlur = parseFloat(getComputedStyle(canvas).getPropertyValue('--petal-blur')) || 0;
+    petals.forEach(petal => { petal.sprite = createPetalSprite(petal); });
+    const count = width < 576 ? 11 : 21;
     if (oldWidth && oldHeight) {
       petals.forEach(petal => {
         petal.x *= width / oldWidth;
@@ -303,6 +318,41 @@ if (languageSwitch) {
     while (petals.length < count) petals.push(newPetal(true));
   }
 
+  // 곡선·그라데이션·블러는 꽃잎 생성 시 한 번만 그려 재사용합니다.
+  function createPetalSprite(petal) {
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    const padding = petalBlur * 3 + 2;
+    const extent = Math.ceil(petal.size * 2 + padding * 2);
+    const sprite = document.createElement('canvas');
+    sprite.width = sprite.height = Math.ceil(extent * ratio);
+    const spriteContext = sprite.getContext('2d');
+    spriteContext.setTransform(ratio, 0, 0, ratio, sprite.width / 2, sprite.height / 2);
+    spriteContext.filter = `blur(${petalBlur}px)`;
+    spriteContext.scale(petal.size, petal.size);
+    const shade = spriteContext.createLinearGradient(-.6, -.5, .5, .6);
+    shade.addColorStop(0, '#a31b32');
+    shade.addColorStop(.45, '#741022');
+    shade.addColorStop(1, '#39040e');
+    spriteContext.fillStyle = shade;
+    spriteContext.beginPath();
+    spriteContext.moveTo(0, .68);
+    spriteContext.bezierCurveTo(-.12, .36, -.64, .04, -.5, -.4);
+    spriteContext.bezierCurveTo(-.42, -.7, -.08, -.68, .05, -.5);
+    spriteContext.bezierCurveTo(.4, -.7, .65, -.28, .47, .12);
+    spriteContext.bezierCurveTo(.35, .43, .09, .48, 0, .68);
+    spriteContext.fill();
+    if (petal.folded) {
+      spriteContext.fillStyle = '#b52a3c';
+      spriteContext.globalAlpha *= .3;
+      spriteContext.beginPath();
+      spriteContext.moveTo(-.5, -.4);
+      spriteContext.bezierCurveTo(-.38, -.12, .1, -.16, 0, .68);
+      spriteContext.bezierCurveTo(-.1, .15, -.43, .03, -.5, -.4);
+      spriteContext.fill();
+    }
+    return { image: sprite, extent: sprite.width / ratio };
+  }
+
   function drawPetal(petal) {
     const wave = elapsed * .65 + petal.phase;
     const edgeFade = Math.min(1, Math.max(0, (height - petal.y + 20) / 60));
@@ -310,29 +360,10 @@ if (languageSwitch) {
     context.translate(petal.x + Math.sin(wave) * petal.sway, petal.y);
     context.rotate(petal.angle);
     // 앞뒷면이 보이듯 가로 폭을 천천히 바꿉니다.
-    context.scale(petal.size * (.55 + Math.sin(wave * .8) * .3), petal.size);
+    context.scale(.55 + Math.sin(wave * .8) * .3, 1);
     context.globalAlpha = petal.opacity * edgeFade;
-    const shade = context.createLinearGradient(-.6, -.5, .5, .6);
-    shade.addColorStop(0, '#a31b32');
-    shade.addColorStop(.45, '#741022');
-    shade.addColorStop(1, '#39040e');
-    context.fillStyle = shade;
-    context.beginPath();
-    context.moveTo(0, .68);
-    context.bezierCurveTo(-.12, .36, -.64, .04, -.5, -.4);
-    context.bezierCurveTo(-.42, -.7, -.08, -.68, .05, -.5);
-    context.bezierCurveTo(.4, -.7, .65, -.28, .47, .12);
-    context.bezierCurveTo(.35, .43, .09, .48, 0, .68);
-    context.fill();
-    if (petal.folded) {
-      context.fillStyle = '#b52a3c';
-      context.globalAlpha *= .3;
-      context.beginPath();
-      context.moveTo(-.5, -.4);
-      context.bezierCurveTo(-.38, -.12, .1, -.16, 0, .68);
-      context.bezierCurveTo(-.1, .15, -.43, .03, -.5, -.4);
-      context.fill();
-    }
+    const { image, extent } = petal.sprite;
+    context.drawImage(image, -extent / 2, -extent / 2, extent, extent);
     context.restore();
   }
 
@@ -344,7 +375,7 @@ if (languageSwitch) {
     }
     // 최대 30fps. 탭 복귀 시 큰 시간 차이로 꽃잎이 튀지 않게 합니다.
     const delta = time - previousTime;
-    if (delta < 1000 / 50) return;
+    if (delta < 1000 / 30 - .5) return;
     const seconds = Math.min(delta / 1000, .05);
     previousTime = time;
     elapsed += seconds;
@@ -354,8 +385,7 @@ if (languageSwitch) {
     context.save();
     context.beginPath();
     context.rect(0, 0, width, height);
-    document.querySelectorAll('.preview-placeholder, #main video, #main iframe').forEach(player => {
-      if (!player.matches('.preview-placeholder') && player.closest('.preview-placeholder')) return;
+    players.forEach(player => {
       const bounds = player.getBoundingClientRect();
       if (bounds.bottom > 0 && bounds.top < height && bounds.width && bounds.height) {
         context.rect(bounds.left - 2, bounds.top - 2, bounds.width + 4, bounds.height + 4);
@@ -383,7 +413,9 @@ if (languageSwitch) {
     if (!preference.matches && !document.hidden) frame = requestAnimationFrame(animate);
   }
 
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', () => {
+    if (!resizeFrame) resizeFrame = requestAnimationFrame(resize);
+  });
   document.addEventListener('visibilitychange', syncMotion);
   preference.addEventListener('change', syncMotion);
   resize();
