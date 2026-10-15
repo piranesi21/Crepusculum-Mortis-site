@@ -5,17 +5,12 @@
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // ==================== 01. 화면 높이 기준 ====================
-  // 터치 화면은 주소창이 펼쳐진 작은 화면 높이를 유지하고, PC는 실제 창 높이를 반영합니다.
+  // 모바일은 진입 순간 보이는 높이를 유지하며, 회전·너비 변경 때만 새 화면을 기준으로 갱신합니다.
   const touchViewport = window.matchMedia('(hover: none) and (pointer: coarse)');
   const usesMobileViewport = () => navigator.userAgentData?.mobile ?? touchViewport.matches;
-  const viewportMeasure = document.createElement('div');
-  viewportMeasure.className = 'viewport-measure';
-  viewportMeasure.setAttribute('aria-hidden', 'true');
-  document.body.append(viewportMeasure);
-
   function readViewportHeight() {
     return usesMobileViewport()
-      ? Math.round(viewportMeasure.getBoundingClientRect().height)
+      ? Math.round(window.visualViewport?.height || window.innerHeight || pageRoot.clientHeight)
       : pageRoot.clientHeight || window.innerHeight;
   }
 

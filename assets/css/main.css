@@ -134,19 +134,6 @@ a:hover {
   margin-inline: auto;
 }
 
-/* 주소창이 펼쳐진 높이를 측정해 하단 로고와 조작 버튼이 가려지지 않도록 합니다. */
-.viewport-measure {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100vh;
-  height: 100svh;
-  visibility: hidden;
-  pointer-events: none;
-  contain: strict;
-}
-
 /* ==================== 03. 메뉴 ==================== */
 
 .site-header {
