@@ -9,9 +9,10 @@
   const touchViewport = window.matchMedia('(hover: none) and (pointer: coarse)');
   const usesMobileViewport = () => navigator.userAgentData?.mobile ?? touchViewport.matches;
   function readViewportHeight() {
-    return usesMobileViewport()
-      ? Math.round(window.visualViewport?.height || window.innerHeight || pageRoot.clientHeight)
-      : pageRoot.clientHeight || window.innerHeight;
+    if (!usesMobileViewport()) return pageRoot.clientHeight || window.innerHeight;
+    const heights = [window.visualViewport?.height, window.innerHeight]
+      .filter(height => Number.isFinite(height) && height > 0);
+    return heights.length ? Math.floor(Math.min(...heights)) : pageRoot.clientHeight;
   }
 
   let viewportWidth = pageRoot.clientWidth;
@@ -22,12 +23,12 @@
   pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
   pageRoot.classList.toggle('is-portrait', portraitLayout);
 
-  function updateViewport() {
+  function updateViewport(force = false) {
     const nextWidth = pageRoot.clientWidth;
     const nextHeight = readViewportHeight();
     const widthChanged = Math.abs(nextWidth - viewportWidth) > 1;
     const heightChanged = Math.abs(nextHeight - viewportHeight) > 1;
-    if (!orientationChanged && !widthChanged && (usesMobileViewport() || !heightChanged)) return;
+    if (!force && !orientationChanged && !widthChanged && (usesMobileViewport() || !heightChanged)) return;
     viewportWidth = nextWidth;
     viewportHeight = nextHeight;
     orientationChanged = false;
@@ -74,10 +75,14 @@
         const remaining = motionPreference.matches ? 0 : Math.max(0, 700 - (performance.now() - started));
         setTimeout(() => {
           pageRoot.classList.remove('is-loading');
-          pageRoot.classList.add('page-ready');
-          background.forEach((element, index) => { element.inert = previousInert[index]; });
-          loader.classList.add('is-finished');
-          setTimeout(() => { loader.hidden = true; }, motionPreference.matches ? 0 : 500);
+          // 스크롤 잠금 해제에 따른 주소창 변화를 기다린 뒤 최초 배치를 확정합니다.
+          setTimeout(() => {
+            updateViewport(true);
+            pageRoot.classList.add('page-ready');
+            background.forEach((element, index) => { element.inert = previousInert[index]; });
+            loader.classList.add('is-finished');
+            setTimeout(() => { loader.hidden = true; }, motionPreference.matches ? 0 : 500);
+          }, 200);
         }, remaining);
       });
     } else {
