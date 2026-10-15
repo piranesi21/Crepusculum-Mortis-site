@@ -420,18 +420,6 @@
     const saveData = navigator.connection?.saveData === true;
     const frameIntervalMs = 1000 / (saveData ? 20 : 30);
     let resizeFrameId = 0;
-    const videoExclusions = [...document.querySelectorAll('.crossfade-preview, #main video, #main iframe')]
-      .filter(player => player.matches('.crossfade-preview') || !player.closest('.crossfade-preview'));
-    const activeVideoExclusions = new Set(videoExclusions);
-    if (videoExclusions.length && 'IntersectionObserver' in window) {
-      const videoObserver = new IntersectionObserver(entries => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) activeVideoExclusions.add(entry.target);
-          else activeVideoExclusions.delete(entry.target);
-        }
-      }, { rootMargin: '64px' });
-      videoExclusions.forEach(player => videoObserver.observe(player));
-    }
     const random = (min, max) => min + Math.random() * (max - min);
 
     function createPetal(initial = false, previousPetal = null) {
@@ -604,20 +592,6 @@
       previousFrameTime = time;
       elapsedSeconds += deltaSeconds;
       context.clearRect(0, 0, canvasWidth, canvasHeight);
-      // 영상이 화면에 접근할 때만 좌표를 읽고, 등장 효과 중에도 가림을 방지합니다.
-      const clipVideos = activeVideoExclusions.size > 0;
-      if (clipVideos) {
-        context.save();
-        context.beginPath();
-        context.rect(0, 0, canvasWidth, canvasHeight);
-        activeVideoExclusions.forEach(player => {
-          const bounds = player.getBoundingClientRect();
-          if (bounds.bottom > 0 && bounds.top < canvasHeight && bounds.width && bounds.height) {
-            context.rect(bounds.left - 2, bounds.top - 2, bounds.width + 4, bounds.height + 4);
-          }
-        });
-        context.clip('evenodd');
-      }
       drawFog();
       petals.forEach((petal, index) => {
         petal.x += petal.drift * deltaSeconds;
@@ -629,7 +603,6 @@
           drawPetal(petal);
         }
       });
-      if (clipVideos) context.restore();
     }
 
     function syncMotion() {

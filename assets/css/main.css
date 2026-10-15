@@ -443,6 +443,8 @@ html:lang(ko) .bonus-note {
 }
 
 .crossfade-preview {
+  position: relative;
+  z-index: 11;
   width: 100%;
   aspect-ratio: 16 / 9;
   margin: var(--space-6) auto 0;
