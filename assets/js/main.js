@@ -17,11 +17,11 @@
 
   let viewportWidth = pageRoot.clientWidth;
   let viewportHeight = readViewportHeight();
-  let portraitLayout = viewportHeight >= viewportWidth;
+  let ornamentStickyLayout = viewportHeight >= viewportWidth * .75;
   let viewportTimeout;
   let orientationChanged = false;
   pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
-  pageRoot.classList.toggle('is-portrait', portraitLayout);
+  pageRoot.classList.toggle('has-sticky-ornament', ornamentStickyLayout);
   pageRoot.classList.toggle('is-mobile-viewport', usesMobileViewport());
 
   function updateViewport(force = false) {
@@ -33,9 +33,9 @@
     viewportWidth = nextWidth;
     viewportHeight = nextHeight;
     orientationChanged = false;
-    portraitLayout = viewportHeight >= viewportWidth;
+    ornamentStickyLayout = viewportHeight >= viewportWidth * .75;
     pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
-    pageRoot.classList.toggle('is-portrait', portraitLayout);
+    pageRoot.classList.toggle('has-sticky-ornament', ornamentStickyLayout);
     pageRoot.classList.toggle('is-mobile-viewport', usesMobileViewport());
     scheduleSectionUpdate();
     window.dispatchEvent(new Event('layoutresize'));
@@ -292,7 +292,6 @@
     )];
     const ornament = document.querySelector('.ornament-window');
     const region = document.querySelector('.ornament-region');
-    const nextOrnament = document.querySelector('.ornament-arch');
     let revealObserver;
     let ornamentFrameId = 0;
     let rootFontSize = parseFloat(getComputedStyle(pageRoot).fontSize);
@@ -305,17 +304,17 @@
         return;
       }
       const bounds = region.getBoundingClientRect();
-      if (portraitLayout) {
+      if (ornamentStickyLayout) {
         const height = ornament.getBoundingClientRect().height;
-        const nextTop = nextOrnament?.getBoundingClientRect().top ?? bounds.bottom;
         const gap = rootFontSize * 2;
-        // 장식 크기 대신 중심의 기준점을 따라가게 하여 다음 장식과의 경계를 유지합니다.
-        const inset = Math.max(0, bounds.bottom - nextTop + height / 2 - gap);
-        const travel = Math.max(0, bounds.height - inset);
-        const anchorTop = Math.min(viewportHeight / 2, travel / 2);
+        const title = region.querySelector('.section-title');
+        const start = Math.max(0, (title?.getBoundingClientRect().top ?? bounds.top) - bounds.top);
+        // 장식의 상단은 트랙리스트 제목에서 시작하고 하단은 INFO 끝에서 멈춥니다.
+        const inset = Math.min(Math.max(0, height - gap), Math.max(0, bounds.height - start));
+        const anchorTop = Math.max(gap, (viewportHeight - height) / 2);
+        region.style.setProperty('--ornament-start-offset', `${start}px`);
         region.style.setProperty('--ornament-stop-inset', `${inset}px`);
         region.style.setProperty('--ornament-anchor-top', `${anchorTop}px`);
-        region.style.setProperty('--ornament-height', `${height}px`);
         ornament.style.removeProperty('--ornament-shift');
         return;
       }
@@ -331,7 +330,7 @@
 
     function scheduleOrnament(event) {
       if (event?.type === 'scroll' &&
-          (motionPreference.matches || portraitLayout || !desktopMotion.matches)) return;
+          (motionPreference.matches || ornamentStickyLayout || !desktopMotion.matches)) return;
       if (!ornamentFrameId) ornamentFrameId = requestAnimationFrame(updateOrnament);
     }
 
@@ -379,7 +378,6 @@
     if ('ResizeObserver' in window && region) {
       const ornamentObserver = new ResizeObserver(scheduleOrnament);
       ornamentObserver.observe(region);
-      if (nextOrnament) ornamentObserver.observe(nextOrnament);
     }
     setMotion();
   }
