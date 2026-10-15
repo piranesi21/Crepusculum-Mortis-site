@@ -461,11 +461,10 @@ html:lang(ko) .bonus-note {
 /* 가로 넘침은 #main에서만 제한하고 장식의 세로 방향은 자르지 않습니다. */
 .ornament-region {
   position: relative;
-  isolation: isolate;
   overflow: visible;
 }
 
-.ornament-window-track {
+.ornament-window-track, .ornament-window-anchor {
   display: contents;
 }
 
@@ -1236,15 +1235,22 @@ dd {
     pointer-events: none;
   }
 
+:where(html.is-portrait) .ornament-window-anchor {
+  display: block;
+  position: sticky;
+  height: 0;
+  top: calc(var(--viewport-origin-shift) + var(--ornament-anchor-top, 2.00rem));
+}
+
 :where(html.is-portrait) .ornament-window {
-    position: sticky;
-    width: 140%;
-    top: calc(var(--viewport-origin-shift) + max(2.00rem, calc((var(--viewport-height) - var(--ornament-height, 140vw)) / 2)));
-    right: auto;
-    bottom: auto;
-    margin-left: 30%;
-    translate: none;
-  }
+  position: absolute;
+  width: 140%;
+  top: 0;
+  right: auto;
+  bottom: auto;
+  margin-left: 30%;
+  translate: 0 -50%;
+}
 
 /* 모바일: 얼굴 중심 보정, 하단 로고 그룹, 트랙 1열 */
 @media (width < 36.00rem) {
@@ -1501,6 +1507,10 @@ dd {
   translate: 0 var(--ornament-shift, 0px);
 }
 
+.motion-enabled:where(.is-portrait) .ornament-window {
+  translate: 0 -50%;
+}
+
 @media (width < 50.00rem) {
   :root {
     --motion-rise: 0.65rem;
@@ -1657,8 +1667,12 @@ html.is-loading { overflow: hidden; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :where(html.is-portrait) .ornament-window {
+  :where(html.is-portrait) .ornament-window-anchor {
     position: relative;
     top: 0;
+  }
+
+  :where(html.is-portrait) .ornament-window {
+    translate: none;
   }
 }

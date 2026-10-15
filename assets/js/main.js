@@ -309,8 +309,12 @@
         const height = ornament.getBoundingClientRect().height;
         const nextTop = nextOrnament?.getBoundingClientRect().top ?? bounds.bottom;
         const gap = rootFontSize * 2;
-        const inset = Math.max(0, bounds.bottom - nextTop - gap);
+        // 장식 크기 대신 중심의 기준점을 따라가게 하여 다음 장식과의 경계를 유지합니다.
+        const inset = Math.max(0, bounds.bottom - nextTop + height / 2 - gap);
+        const travel = Math.max(0, bounds.height - inset);
+        const anchorTop = Math.min(viewportHeight / 2, travel / 2);
         region.style.setProperty('--ornament-stop-inset', `${inset}px`);
+        region.style.setProperty('--ornament-anchor-top', `${anchorTop}px`);
         region.style.setProperty('--ornament-height', `${height}px`);
         ornament.style.removeProperty('--ornament-shift');
         return;
