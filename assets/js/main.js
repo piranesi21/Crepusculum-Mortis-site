@@ -22,6 +22,7 @@
   let orientationChanged = false;
   pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
   pageRoot.classList.toggle('is-portrait', portraitLayout);
+  pageRoot.classList.toggle('is-mobile-viewport', usesMobileViewport());
 
   function updateViewport(force = false) {
     const nextWidth = pageRoot.clientWidth;
@@ -35,6 +36,7 @@
     portraitLayout = viewportHeight >= viewportWidth;
     pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
     pageRoot.classList.toggle('is-portrait', portraitLayout);
+    pageRoot.classList.toggle('is-mobile-viewport', usesMobileViewport());
     scheduleSectionUpdate();
     window.dispatchEvent(new Event('layoutresize'));
   }

@@ -38,6 +38,7 @@
   --banner-logo-right: 4%;
 
   --viewport-height: 100vh;
+  --viewport-origin-shift: 0px;
 
   --banner-art-size: max(100vw, calc(var(--banner-height) + 8.00rem));
   --banner-art-left: 50%;
@@ -134,6 +135,13 @@ a:hover {
   margin-inline: auto;
 }
 
+/* 위쪽 주소창이 사라져도 화면에서 같은 위치를 유지하도록 원점 이동만 보상합니다. */
+@supports (height: 100dvh) {
+  :root.is-mobile-viewport {
+    --viewport-origin-shift: calc(100dvh - var(--viewport-height));
+  }
+}
+
 /* ==================== 03. 메뉴 ==================== */
 
 .site-header {
@@ -141,8 +149,8 @@ a:hover {
   z-index: 20;
   left: max(var(--nav-left), env(safe-area-inset-left));
 
-  top: calc(var(--viewport-height) * 0.5);
-  transform: translateY(-50%);
+  bottom: calc(var(--viewport-height) * 0.5);
+  transform: translateY(50%);
 }
 
 #navigation-links {
@@ -217,8 +225,7 @@ a:hover {
   position: fixed;
   z-index: 25;
   right: max(1.00rem, env(safe-area-inset-right));
-  top: calc(var(--viewport-height) - max(1.00rem, env(safe-area-inset-bottom)));
-  transform: translateY(-100%);
+  bottom: max(1.00rem, env(safe-area-inset-bottom));
   display: grid;
   justify-items: end;
   gap: 0.20rem;
@@ -1232,7 +1239,7 @@ dd {
 :where(html.is-portrait) .ornament-window {
     position: sticky;
     width: 140%;
-    top: max(2.00rem, calc((var(--viewport-height) - var(--ornament-height, 140vw)) / 2));
+    top: calc(var(--viewport-origin-shift) + max(2.00rem, calc((var(--viewport-height) - var(--ornament-height, 140vw)) / 2)));
     right: auto;
     bottom: auto;
     margin-left: 30%;
