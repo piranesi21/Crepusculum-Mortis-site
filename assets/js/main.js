@@ -117,10 +117,10 @@
       anchor.classList.add('is-hovered');
     }
 
-    function releaseNavigationHover(anchor) {
+    function releaseNavigationHover(anchor, delay = 200) {
       if (hoveredAnchor !== anchor) return;
       clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(clearNavigationHover, 200);
+      hoverTimeout = setTimeout(clearNavigationHover, delay);
     }
 
     for (const { anchor } of sectionLinks) {
@@ -133,9 +133,11 @@
         showNavigationHover(anchor);
       });
       anchor.addEventListener('pointerup', event => {
-        if (event.pointerType === 'touch') releaseNavigationHover(anchor);
+        if (event.pointerType === 'touch') releaseNavigationHover(anchor, 1000);
       });
-      anchor.addEventListener('pointerleave', () => releaseNavigationHover(anchor));
+      anchor.addEventListener('pointerleave', event => {
+        releaseNavigationHover(anchor, event.pointerType === 'touch' ? 1000 : 200);
+      });
       anchor.addEventListener('pointercancel', clearNavigationHover);
     }
     hoverPreference.addEventListener('change', clearNavigationHover);

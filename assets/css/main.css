@@ -102,8 +102,8 @@ a {
   text-underline-offset: 0.25em;
 }
 
-a:hover {
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  a:hover { text-decoration: underline; }
 }
 
 :focus-visible {
@@ -275,8 +275,12 @@ a:hover {
   translate: 0.05em 0.05rem;
 }
 
-.language-switch button:hover {
+.language-switch button:is(:active, :focus-visible) {
   color: var(--text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .language-switch button:hover { color: var(--text); }
 }
 
 .language-switch button[aria-pressed="true"] {
@@ -836,7 +840,7 @@ dd {
   outline-offset: 3px;
 }
 
-.store-buttons a:not([href="#"]):focus-visible::before {
+.store-buttons a:not([href="#"]):is(:active, :focus-visible)::before {
   opacity: 1;
 }
 
@@ -900,11 +904,22 @@ dd {
   }
 }
 
-.production-credit a:focus-visible,
-.credit-team a:focus-visible,
-.artist-credit a:focus-visible {
+.production-credit a:is(:active, :focus-visible),
+.credit-team a:is(:active, :focus-visible),
+.artist-credit a:is(:active, :focus-visible) {
   color: var(--gold);
+  text-shadow: 0 0 0.50rem rgb(253 210 62 / 25%);
   background-size: 100% 1px;
+}
+
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .production-credit a:active,
+  .credit-team a:active,
+  .artist-credit a:active,
+  .album-jacket:active::after,
+  .album-jacket:active .jacket-download-label {
+    transition-duration: 80ms;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1635,7 +1650,7 @@ html.is-loading { overflow: hidden; }
   transition: opacity 120ms ease;
 }
 
-.petal-toggle:focus-visible::after { opacity: 1; }
+.petal-toggle:is(:active, :focus-visible)::after { opacity: 1; }
 
 @media (hover: hover) and (pointer: fine) {
   .petal-toggle:hover::after { opacity: 1; }
