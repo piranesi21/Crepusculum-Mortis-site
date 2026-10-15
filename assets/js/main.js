@@ -5,10 +5,22 @@
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // ==================== 01. 화면 높이 기준 ====================
-  // 터치 화면의 주소창 높이는 무시하고, 실제 크기 변경이 끝난 뒤 배치를 갱신합니다.
+  // 터치 화면은 주소창 상태와 무관한 큰 화면 높이를 쓰고, PC는 실제 창 높이를 반영합니다.
   const touchViewport = window.matchMedia('(hover: none) and (pointer: coarse)');
+  const usesMobileViewport = () => navigator.userAgentData?.mobile ?? touchViewport.matches;
+  const viewportMeasure = document.createElement('div');
+  viewportMeasure.className = 'viewport-measure';
+  viewportMeasure.setAttribute('aria-hidden', 'true');
+  document.body.append(viewportMeasure);
+
+  function readViewportHeight() {
+    return usesMobileViewport()
+      ? Math.round(viewportMeasure.getBoundingClientRect().height)
+      : pageRoot.clientHeight || window.innerHeight;
+  }
+
   let viewportWidth = pageRoot.clientWidth;
-  let viewportHeight = pageRoot.clientHeight || window.innerHeight;
+  let viewportHeight = readViewportHeight();
   let portraitLayout = viewportHeight >= viewportWidth;
   let viewportTimeout;
   let orientationChanged = false;
@@ -17,10 +29,10 @@
 
   function updateViewport() {
     const nextWidth = pageRoot.clientWidth;
-    const nextHeight = pageRoot.clientHeight || window.innerHeight;
+    const nextHeight = readViewportHeight();
     const widthChanged = Math.abs(nextWidth - viewportWidth) > 1;
     const heightChanged = Math.abs(nextHeight - viewportHeight) > 1;
-    if (!orientationChanged && !widthChanged && (touchViewport.matches || !heightChanged)) return;
+    if (!orientationChanged && !widthChanged && (usesMobileViewport() || !heightChanged)) return;
     viewportWidth = nextWidth;
     viewportHeight = nextHeight;
     orientationChanged = false;
