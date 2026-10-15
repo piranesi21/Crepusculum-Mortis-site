@@ -1,4 +1,4 @@
-/* 로컬 웹폰트 등록. 화면 디자인은 main.css에서 조정하세요. */
+/* ==================== 로컬 글꼴 ==================== */
 
 @font-face {
   font-family: 'Grenze Gotisch';
@@ -64,7 +64,6 @@
     U+8FBC, U+9177, U+97D3, U+FF01;
 }
 
-/* 영문 산세리프만 Josefin Sans, 일본어·한국어는 Pretendard JP로 유지 */
 @font-face {
   font-family: 'Josefin Sans';
   src: url('../fonts/JosefinSans.ttf') format('truetype');
@@ -73,10 +72,9 @@
   unicode-range: U+20-024F;
 }
 
-/* 한국어 앨범 소개 제목: Google Fonts Hahmlet, SIL OFL */
 @font-face {
-  font-family: 'Hahmlet';
-  src: url('../fonts/Hahmlet.ttf') format('truetype');
-  font-weight: 100 900;
+  font-family: 'Song Myung';
+  src: url('../fonts/SongMyung.ttf') format('truetype');
+  font-weight: 400;
   font-display: swap;
 }
