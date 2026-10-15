@@ -78,8 +78,6 @@
   src: url('../fonts/JosefinSans.woff2') format('woff2');
   font-weight: 100 700;
   font-display: swap;
-  unicode-range:
-    U+20;
 }
 
 @font-face {

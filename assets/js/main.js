@@ -5,28 +5,35 @@
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // ==================== 01. 화면 높이 기준 ====================
-  // 주소창에 따른 높이 변화는 무시하고, 접기·펼치기와 회전 때만 갱신합니다.
+  // 터치 화면의 주소창 높이는 무시하고, 실제 크기 변경이 끝난 뒤 배치를 갱신합니다.
+  const touchViewport = window.matchMedia('(hover: none) and (pointer: coarse)');
   let viewportWidth = pageRoot.clientWidth;
   let viewportHeight = pageRoot.clientHeight || window.innerHeight;
-  let viewportFrameId = 0;
+  let portraitLayout = viewportHeight >= viewportWidth;
+  let viewportTimeout;
   let orientationChanged = false;
-  if (viewportHeight > 0) {
-    pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
-  }
+  pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
+  pageRoot.classList.toggle('is-portrait', portraitLayout);
 
   function updateViewport() {
-    viewportFrameId = 0;
     const nextWidth = pageRoot.clientWidth;
-    if (nextWidth === viewportWidth && !orientationChanged) return;
+    const nextHeight = pageRoot.clientHeight || window.innerHeight;
+    const widthChanged = Math.abs(nextWidth - viewportWidth) > 1;
+    const heightChanged = Math.abs(nextHeight - viewportHeight) > 1;
+    if (!orientationChanged && !widthChanged && (touchViewport.matches || !heightChanged)) return;
     viewportWidth = nextWidth;
-    viewportHeight = pageRoot.clientHeight || window.innerHeight;
+    viewportHeight = nextHeight;
     orientationChanged = false;
+    portraitLayout = viewportHeight >= viewportWidth;
     pageRoot.style.setProperty('--viewport-height', `${viewportHeight}px`);
+    pageRoot.classList.toggle('is-portrait', portraitLayout);
     scheduleSectionUpdate();
+    window.dispatchEvent(new Event('layoutresize'));
   }
 
   function scheduleViewportUpdate() {
-    if (!viewportFrameId) viewportFrameId = requestAnimationFrame(updateViewport);
+    clearTimeout(viewportTimeout);
+    viewportTimeout = setTimeout(updateViewport, 200);
   }
 
   window.addEventListener('resize', scheduleViewportUpdate);
@@ -34,6 +41,7 @@
     orientationChanged = true;
     scheduleViewportUpdate();
   });
+  touchViewport.addEventListener('change', scheduleViewportUpdate);
 
   // ==================== 02. 로딩 화면 ====================
   {
@@ -271,7 +279,6 @@
     const ornament = document.querySelector('.ornament-window');
     const region = document.querySelector('.ornament-region');
     const nextOrnament = document.querySelector('.ornament-arch');
-    const portraitOrnament = window.matchMedia('(orientation: portrait)');
     let revealObserver;
     let ornamentFrameId = 0;
     let rootFontSize = parseFloat(getComputedStyle(pageRoot).fontSize);
@@ -284,7 +291,7 @@
         return;
       }
       const bounds = region.getBoundingClientRect();
-      if (portraitOrnament.matches) {
+      if (portraitLayout) {
         const height = ornament.getBoundingClientRect().height;
         const nextTop = nextOrnament?.getBoundingClientRect().top ?? bounds.bottom;
         const gap = rootFontSize * 2;
@@ -298,15 +305,15 @@
         ornament.style.removeProperty('--ornament-shift');
         return;
       }
-      if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
+      if (bounds.bottom < 0 || bounds.top > viewportHeight) return;
       // 움직이지 않는 부모를 기준으로 계산하여 오차 누적을 방지합니다.
-      const progress = (window.innerHeight - bounds.top) / (window.innerHeight + bounds.height);
+      const progress = (viewportHeight - bounds.top) / (viewportHeight + bounds.height);
       ornament.style.setProperty('--ornament-shift', `${(progress - .5) * rootFontSize * 4}px`);
     }
 
     function scheduleOrnament(event) {
       if (event?.type === 'scroll' &&
-          (motionPreference.matches || portraitOrnament.matches || !desktopMotion.matches)) return;
+          (motionPreference.matches || portraitLayout || !desktopMotion.matches)) return;
       if (!ornamentFrameId) ornamentFrameId = requestAnimationFrame(updateOrnament);
     }
 
@@ -344,13 +351,12 @@
     }
 
     window.addEventListener('scroll', scheduleOrnament, { passive: true });
-    window.addEventListener('resize', () => {
+    window.addEventListener('layoutresize', () => {
       rootFontSize = parseFloat(getComputedStyle(pageRoot).fontSize);
       scheduleOrnament();
     });
     motionPreference.addEventListener('change', setMotion);
     desktopMotion.addEventListener('change', scheduleOrnament);
-    portraitOrnament.addEventListener('change', scheduleOrnament);
     window.addEventListener('load', scheduleOrnament, { once: true });
     if ('ResizeObserver' in window && region) {
       const ornamentObserver = new ResizeObserver(scheduleOrnament);

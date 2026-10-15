@@ -240,7 +240,7 @@ a:hover {
 
 .language-switch > span {
   color: var(--line);
-  font: 400 0.90rem/1 var(--body-font);
+  font: 400 0.90rem/1 var(--sans-font);
 }
 
 .language-switch button {
@@ -677,6 +677,7 @@ html:lang(ko) .bonus-note {
 }
 
 .album-information {
+  --info-value-size: 1.50rem;
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
   gap: var(--space-4);
@@ -693,6 +694,7 @@ html:lang(ko) .bonus-note {
 }
 
 .album-information dd {
+  font-size: var(--info-value-size);
   margin-top: 0;
   line-height: 1.15;
 }
@@ -723,6 +725,10 @@ dd {
   line-height: 1.25;
   margin-top: var(--space-1);
   overflow-wrap: anywhere;
+}
+
+.album-information dd.price-amount {
+  font-size: calc(var(--info-value-size) * 2);
 }
 
 .info-album-logo {
@@ -791,6 +797,8 @@ dd {
 }
 
 .store-buttons a[href="#"] {
+  font-family: var(--sans-font);
+  font-weight: 400;
   pointer-events: none;
   user-select: none;
 }
@@ -959,9 +967,9 @@ dd {
 .artist-credit li::before {
   content: '|';
   position: absolute;
-  left: -1.00rem;
-  top: 50%;
-  transform: translateY(-50%);
+  left: calc(var(--space-3) / -2);
+  top: calc(50% - 0.05em);
+  transform: translate(-50%, -50%);
   color: var(--muted);
   pointer-events: none;
 }
@@ -1036,6 +1044,10 @@ dd {
 
   dd {
     font-size: 1.25rem;
+  }
+
+  .album-information {
+    --info-value-size: 1.25rem;
   }
 
 }
@@ -1204,13 +1216,12 @@ dd {
     gap: var(--space-4);
   }
 
-  .album-information dd {
-    font-size: 1.15rem;
+  .album-information {
+    --info-value-size: 1.15rem;
   }
 }
 
-@media (orientation: portrait) {
-  .ornament-window-track {
+:where(html.is-portrait) .ornament-window-track {
     display: block;
     position: absolute;
     inset: 0 0 var(--ornament-stop-inset, 2.00rem);
@@ -1218,7 +1229,7 @@ dd {
     pointer-events: none;
   }
 
-  .ornament-window {
+:where(html.is-portrait) .ornament-window {
     position: sticky;
     width: 140%;
     top: max(2.00rem, calc((var(--viewport-height) - var(--ornament-height, 140vw)) / 2));
@@ -1227,7 +1238,6 @@ dd {
     margin-left: 30%;
     translate: none;
   }
-}
 
 /* 모바일: 얼굴 중심 보정, 하단 로고 그룹, 트랙 1열 */
 @media (width < 36.00rem) {
@@ -1340,8 +1350,8 @@ dd {
     font-size: 1.60rem;
   }
 
-  .album-information dd {
-    font-size: 1.05rem;
+  .album-information {
+    --info-value-size: 1.05rem;
   }
 
   .credit-team dd, .artist-credit ul, .production-credit .production-logo {
@@ -1573,6 +1583,7 @@ html.is-loading { overflow: hidden; }
 
 /* ==================== 18. 꽃잎 켜기·끄기 ==================== */
 .petal-toggle {
+  font-family: var(--sans-font);
   position: relative;
   display: grid;
   place-items: center;
@@ -1638,8 +1649,8 @@ html.is-loading { overflow: hidden; }
   .petal-toggle-track::before, .petal-toggle::after { transition: none; }
 }
 
-@media (orientation: portrait) and (prefers-reduced-motion: reduce) {
-  .ornament-window {
+@media (prefers-reduced-motion: reduce) {
+  :where(html.is-portrait) .ornament-window {
     position: relative;
     top: 0;
   }
