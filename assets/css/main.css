@@ -194,17 +194,22 @@ a:hover {
   text-shadow: 0 1px 2px var(--bg), 0 0 0.25rem var(--bg), 0 0 0.50rem var(--bg);
 }
 
-#navigation-links a:focus-visible span {
+#navigation-links a:is(:focus-visible, .is-hovered) span {
   opacity: 1;
 }
 
 #navigation-links a[aria-current]::before,
-#navigation-links a:focus-visible::before {
+#navigation-links a:is(:focus-visible, .is-hovered)::before {
   background: var(--text);
   border-color: var(--text);
 }
 
-/* 터치 후 hover가 남지 않도록 마우스 환경에서만 글자를 표시합니다. */
+#navigation-links:has(a.is-hovered) a[aria-current]:not(.is-hovered)::before {
+  background: transparent;
+  border-color: #ae8189;
+}
+
+/* 실제 hover는 마우스 환경에서만 적용하고 터치는 JS로 해제합니다. */
 @media (hover: hover) and (pointer: fine) {
   #navigation-links a:is(:hover, .is-hovered) span {
     opacity: 1;
@@ -663,8 +668,8 @@ html:lang(ko) .bonus-note {
   pointer-events: none;
 }
 
-.album-jacket:hover::after,
-.album-jacket:hover .jacket-download-label,
+.album-jacket:active::after,
+.album-jacket:active .jacket-download-label,
 .album-jacket:focus-visible::after,
 .album-jacket:focus-visible .jacket-download-label { opacity: 1; }
 
@@ -673,9 +678,9 @@ html:lang(ko) .bonus-note {
   outline-offset: 0.25rem;
 }
 
-@media (hover: none) {
-  .album-jacket::after,
-  .album-jacket .jacket-download-label { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .album-jacket:hover::after,
+  .album-jacket:hover .jacket-download-label { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

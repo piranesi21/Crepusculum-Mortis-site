@@ -111,18 +111,32 @@
       hoveredAnchor = undefined;
     }
 
+    function showNavigationHover(anchor) {
+      clearNavigationHover();
+      hoveredAnchor = anchor;
+      anchor.classList.add('is-hovered');
+    }
+
+    function releaseNavigationHover(anchor) {
+      if (hoveredAnchor !== anchor) return;
+      clearTimeout(hoverTimeout);
+      hoverTimeout = setTimeout(clearNavigationHover, 200);
+    }
+
     for (const { anchor } of sectionLinks) {
       anchor.addEventListener('pointerenter', event => {
         if (!hoverPreference.matches || event.pointerType === 'touch') return;
-        clearNavigationHover();
-        hoveredAnchor = anchor;
-        anchor.classList.add('is-hovered');
+        showNavigationHover(anchor);
       });
-      anchor.addEventListener('pointerleave', () => {
-        if (hoveredAnchor !== anchor) return;
-        clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(clearNavigationHover, 200);
+      anchor.addEventListener('pointerdown', event => {
+        if (event.pointerType !== 'touch') return;
+        showNavigationHover(anchor);
       });
+      anchor.addEventListener('pointerup', event => {
+        if (event.pointerType === 'touch') releaseNavigationHover(anchor);
+      });
+      anchor.addEventListener('pointerleave', () => releaseNavigationHover(anchor));
+      anchor.addEventListener('pointercancel', clearNavigationHover);
     }
     hoverPreference.addEventListener('change', clearNavigationHover);
 
