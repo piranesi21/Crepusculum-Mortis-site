@@ -209,7 +209,7 @@
         "ダウンロードいただけます。"
       ],
       "label": "言語選択",
-      "petals": "花びらアニメーション",
+      "animation": "背景アニメーション",
       "albumArt": "Crepusculum Mortisのアルバムアートをダウンロード（新しいタブで開く）",
       "albumArtAlt": "Crepusculum Mortisのアルバムアート、イラスト：shru",
       "navigation": "メインナビゲーション",
@@ -222,7 +222,7 @@
       "description": "고딕의 장엄함과 일렉트로닉의 광기가 맞닿는 황혼.[br]장르도 BPM도 묻지 않고, 오직 '고딕'의 미학 아래 모인 아티스트들이 저마다의 어둠을 붉게 물들입니다.",
       "note": "*BONUS TRACK은 디스크에 수록되어 있지 않으며, 북클릿에 기재된 QR코드로 다운로드하실 수 있습니다.",
       "label": "언어 선택",
-      "petals": "꽃잎 애니메이션",
+      "animation": "배경 애니메이션",
       "albumArt": "Crepusculum Mortis 앨범아트 다운로드 (새 탭에서 열기)",
       "albumArtAlt": "Crepusculum Mortis 앨범아트, 일러스트: shru",
       "navigation": "주요 탐색",
@@ -269,7 +269,7 @@
       languageSwitch.lang = language;
       languageSwitch.setAttribute('aria-label', text.label);
       for (const [selector, label] of [
-        ['.petal-toggle', text.petals],
+        ['.petal-toggle', text.animation],
         ['.album-jacket', text.albumArt],
         ['#nav', text.navigation],
         ['.page-loader', text.loading],
@@ -398,24 +398,25 @@
     setMotion();
   }
 
-  // ==================== 06. 장미 꽃잎 ====================
+  // ==================== 06. 장미 꽃잎과 낮게 흐르는 안개 ====================
   (() => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     if (!context) return;
     canvas.className = 'petal-canvas';
     canvas.setAttribute('aria-hidden', 'true');
-    document.body.append(canvas);
+    document.querySelector('#main').append(canvas);
     let canvasWidth = 0;
     let canvasHeight = 0;
     let petals = [];
+    let fogSprite;
     let animationFrameId = 0;
     let previousFrameTime = 0;
     let elapsedSeconds = 0;
     let petalBlur = 4;
     let pixelRatio = 0;
-    let petalsPaused = false;
-    const petalToggle = document.querySelector('.petal-toggle');
+    let animationPaused = false;
+    const animationToggle = document.querySelector('.petal-toggle');
     const saveData = navigator.connection?.saveData === true;
     const frameIntervalMs = 1000 / (saveData ? 20 : 30);
     let resizeFrameId = 0;
@@ -529,6 +530,67 @@
       context.restore();
     }
 
+    // 구름 무늬는 작은 이미지에 한 번만 계산하고, 겹친 층의 위치만 움직입니다.
+    function createFogSprite() {
+      const image = document.createElement('canvas');
+      image.width = 384;
+      image.height = 192;
+      const fogContext = image.getContext('2d');
+      if (!fogContext) return null;
+      const pixels = fogContext.createImageData(image.width, image.height);
+      const layers = [64, 32, 16, 8].map((scale, index) => {
+        const columns = Math.ceil(image.width / scale) + 2;
+        const rows = Math.ceil(image.height / (scale * .55)) + 2;
+        const values = new Float32Array(columns * rows);
+        for (let i = 0; i < values.length; i++) {
+          const value = Math.sin(i * 127.1 + index * 311.7) * 43758.5453;
+          values[i] = value - Math.floor(value);
+        }
+        return { scale, columns, values, weight: 1 / (2 ** index) };
+      });
+      for (let y = 0; y < image.height; y++) {
+        for (let x = 0; x < image.width; x++) {
+          let density = 0;
+          for (const layer of layers) {
+            const nx = x / layer.scale;
+            const ny = y / (layer.scale * .55);
+            const ix = Math.floor(nx);
+            const iy = Math.floor(ny);
+            const fx = nx - ix;
+            const fy = ny - iy;
+            const sx = fx * fx * (3 - 2 * fx);
+            const sy = fy * fy * (3 - 2 * fy);
+            const offset = iy * layer.columns + ix;
+            const top = layer.values[offset] * (1 - sx) + layer.values[offset + 1] * sx;
+            const bottom = layer.values[offset + layer.columns] * (1 - sx) +
+              layer.values[offset + layer.columns + 1] * sx;
+            density += (top * (1 - sy) + bottom * sy) * layer.weight;
+          }
+          const edge = Math.sin(Math.PI * x / image.width) * Math.sin(Math.PI * y / image.height);
+          const alpha = Math.max(0, Math.min(1, (density / 1.875 - .32) * 2.8));
+          const offset = (y * image.width + x) * 4;
+          pixels.data[offset] = 255;
+          pixels.data[offset + 1] = 255;
+          pixels.data[offset + 2] = 255;
+          pixels.data[offset + 3] = Math.round(255 * alpha * alpha * edge);
+        }
+      }
+      fogContext.putImageData(pixels, 0, 0);
+      return image;
+    }
+
+    function drawFog() {
+      if (!fogSprite) return;
+      context.save();
+      context.globalAlpha = .30;
+      context.drawImage(fogSprite, canvasWidth * (-.30 + Math.sin(elapsedSeconds / 6) * .16),
+        canvasHeight * (.58 + Math.sin(elapsedSeconds / 10) * .025), canvasWidth * 1.65, canvasHeight * .65);
+      context.globalAlpha = .16;
+      context.drawImage(fogSprite, canvasWidth * (-.35 - Math.sin(elapsedSeconds / 8 + 1.5) * .20),
+        canvasHeight * (.48 + Math.sin(elapsedSeconds / 7) * .035), canvasWidth * 1.75, canvasHeight * .55);
+      context.restore();
+    }
+
     function animate(time) {
       animationFrameId = requestAnimationFrame(animate);
       if (!pageRoot.classList.contains('page-ready')) {
@@ -556,6 +618,7 @@
         });
         context.clip('evenodd');
       }
+      drawFog();
       petals.forEach((petal, index) => {
         petal.x += petal.drift * deltaSeconds;
         petal.y += petal.fall * deltaSeconds;
@@ -574,18 +637,21 @@
       animationFrameId = 0;
       previousFrameTime = 0;
       context.clearRect(0, 0, canvasWidth, canvasHeight);
-      if (petalToggle) {
-        petalToggle.hidden = motionPreference.matches;
-        petalToggle.setAttribute('aria-checked', String(!petalsPaused));
+      if (animationToggle) {
+        animationToggle.hidden = motionPreference.matches;
+        animationToggle.setAttribute('aria-checked', String(!animationPaused));
       }
-      if (!motionPreference.matches && !petalsPaused && !document.hidden) animationFrameId = requestAnimationFrame(animate);
+      if (!motionPreference.matches && !animationPaused && !document.hidden) {
+        fogSprite ??= createFogSprite();
+        animationFrameId = requestAnimationFrame(animate);
+      }
     }
 
     window.addEventListener('resize', () => {
       if (!resizeFrameId) resizeFrameId = requestAnimationFrame(resize);
     });
-    petalToggle?.addEventListener('click', () => {
-      petalsPaused = !petalsPaused;
+    animationToggle?.addEventListener('click', () => {
+      animationPaused = !animationPaused;
       syncMotion();
     });
     document.addEventListener('visibilitychange', syncMotion);
