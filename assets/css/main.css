@@ -134,14 +134,14 @@ a:hover {
   margin-inline: auto;
 }
 
-/* 주소창이 접힌 높이를 측정하며 레이아웃과 입력에 영향을 주지 않습니다. */
+/* 주소창이 펼쳐진 높이를 측정해 하단 로고와 조작 버튼이 가려지지 않도록 합니다. */
 .viewport-measure {
   position: fixed;
   top: 0;
   left: 0;
   width: 0;
   height: 100vh;
-  height: 100lvh;
+  height: 100svh;
   visibility: hidden;
   pointer-events: none;
   contain: strict;
